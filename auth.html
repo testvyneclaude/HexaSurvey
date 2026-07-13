@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HexaSurvey — Sign in part</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="auth.css">
+</head>
+<body>
+
+<a href="surv-land.html" class="back-link">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  Back to home
+</a>
+
+<div class="field" aria-hidden="true">
+  <div class="blob blob-a"></div>
+  <div class="blob blob-b"></div>
+  <div class="blob blob-c"></div>
+  <div class="blob blob-d"></div>
+</div>
+<div class="grain"></div>
+
+<div class="card" id="card">
+  <div class="mark-wrap">
+    <svg class="mark" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="g1" x1="0" y1="0" x2="100" y2="100">
+          <stop offset="0%" stop-color="#5eead4"/>
+          <stop offset="50%" stop-color="#a855f7"/>
+          <stop offset="100%" stop-color="#f0abfc"/>
+        </linearGradient>
+        <linearGradient id="g2" x1="100" y1="0" x2="0" y2="100">
+          <stop offset="0%" stop-color="#7dd3fc"/>
+          <stop offset="100%" stop-color="#6d28d9"/>
+        </linearGradient>
+      </defs>
+      <path class="p1" d="M8 10 L46 50 L8 90" stroke="url(#g1)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path class="p2" d="M92 10 L54 50 L92 90" stroke="url(#g2)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path class="p3" d="M50 38 L50 62" stroke="#f0abfc" stroke-width="10" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <h1 class="title" id="formTitle">Sign in</h1>
+
+  <form id="authForm" novalidate>
+    <div class="field-group extra" id="nameGroup">
+      <label for="name">Full name</label>
+      <div class="input-underline">
+        <input type="text" id="name" placeholder="Ente your name" autocomplete="name">
+        <div class="line"></div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label for="email">EMail</label>
+      <div class="input-underline">
+        <input type="email" id="email" placeholder="yourname@examle.com" autocomplete="email" required>
+        <div class="line"></div>
+      </div>
+      <div class="error-msg" id="emailError">Enter a valid email address.</div>
+    </div>
+
+    <div class="field-group">
+      <label for="password">Password</label>
+      <div class="input-underline">
+        <input type="password" id="password" placeholder="yourpassword" autocomplete="current-password" required>
+        <div class="line"></div>
+      </div>
+      <div class="error-msg" id="passwordError">Password must be at least 8 characters.</div>
+    </div>
+
+    <div class="field-group extra" id="confirmGroup">
+      <label for="confirm">Confirm password</label>
+      <div class="input-underline">
+        <input type="password" id="confirm" placeholder="confirm password" autocomplete="new-password">
+        <div class="line"></div>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn" id="submitBtn">Sign in</button>
+  </form>
+
+  <div class="switch-line" id="switchLine">
+    Don't have an account?
+    <button type="button" id="switchBtn">Sign up
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  const card = document.getElementById('card');
+  const formTitle = document.getElementById('formTitle');
+  const submitBtn = document.getElementById('submitBtn');
+  const switchLine = document.getElementById('switchLine');
+  const switchBtn = document.getElementById('switchBtn');
+  const form = document.getElementById('authForm');
+
+  let mode = 'signin'; 
+
+  function render(){
+    if (mode === 'signin'){
+      card.classList.remove('mode-signup');
+      formTitle.textContent = 'Sign in';
+      submitBtn.textContent = 'Sign in';
+      switchLine.innerHTML = "Don't have an account? ";
+      switchLine.appendChild(switchBtn);
+      switchBtn.innerHTML = 'Sign up <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    } else {
+      card.classList.add('mode-signup');
+      formTitle.textContent = 'Create your account';
+      submitBtn.textContent = 'Sign up';
+      switchLine.innerHTML = 'Already have an account? ';
+      switchLine.appendChild(switchBtn);
+      switchBtn.innerHTML = 'Sign in <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    }
+  }
+
+  switchBtn.addEventListener('click', () => {
+    mode = mode === 'signin' ? 'signup' : 'signin';
+    card.style.transform = 'scale(.985)';
+    setTimeout(() => { card.style.transform = ''; }, 220);
+    render();
+  });
+
+  
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const emailError = document.getElementById('emailError');
+  const passwordError = document.getElementById('passwordError');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let valid = true;
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value);
+    if (!emailOk){ emailError.classList.add('show'); valid = false; } else { emailError.classList.remove('show'); }
+
+    const passOk = passwordInput.value.length >= 8;
+    if (!passOk){ passwordError.classList.add('show'); valid = false; } else { passwordError.classList.remove('show'); }
+
+    if (valid){
+      submitBtn.textContent = mode === 'signin' ? 'Signing in…' : 'Creating account…';
+      submitBtn.style.opacity = '0.75';
+      setTimeout(() => {
+        submitBtn.textContent = mode === 'signin' ? 'Signed in ✓' : 'Account created ✓';
+      }, 900);
+    }
+  });
+
+  [emailInput, passwordInput].forEach(inp => {
+    inp.addEventListener('input', () => {
+      emailError.classList.remove('show');
+      passwordError.classList.remove('show');
+    });
+  });
+</script>
+
+</body>
+</html>

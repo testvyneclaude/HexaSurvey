@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="surv-land.css">
 </head>
 <body>
@@ -21,16 +22,20 @@
       <li><a href="#metrics">Insights</a></li>
       <li><a href="#pricing">Pricing</a></li>
     </ul>
-    <span style="margin-left: 100px;" class="bar">🪝</span>
-    <a href="auth.html" class="sign-in nav-cta">Sign in</a>
+    <div class="nav-actions">
+      <a href="auth.html" class="sign-in nav-cta">Sign in</a>
+      <div class="bar"><i class="fa-solid fa-bars"></i></div>
+    </div>
   </div>
   <div class="wrappednav">
-       <ul class="nav-linkss">
+    <div class="close-bar"><i class="fa-solid fa-xmark"></i></div>
+    <ul class="nav-linkss">
       <li><a href="#features">Overview</a></li>
       <li><a href="about-us.html">About us</a></li>
       <li><a href="#" class="active">Product</a></li>
       <li><a href="#metrics">Insights</a></li>
       <li><a href="#pricing">Pricing</a></li>
+      <li><a href="auth.html">Sign in</a></li>
     </ul>
   </div>
 </header>
@@ -92,19 +97,16 @@
     <div class="feature-grid stagger">
       <div class="feature-card reveal" style="--i:0">
         <span class="feature-tag">Build</span>
-      
         <h3>Drag-and-drop builder</h3>
         <p>Design branching, logic-aware surveys with 30+ question types — no code, no friction, just clarity.</p>
       </div>
       <div class="feature-card reveal" style="--i:1">
         <span class="feature-tag">Distribute</span>
-       
         <h3>Reach every channel</h3>
         <p>Share by link, email, embed, or QR — GlowSurvey adapts to any screen and any audience automatically.</p>
       </div>
       <div class="feature-card reveal" style="--i:2">
         <span class="feature-tag">Analyze</span>
-     
         <h3>Real-time analysis</h3>
         <p>Watch results turn into charts, sentiment, and cross-tabs the moment responses arrive.</p>
       </div>
@@ -141,20 +143,30 @@
 <footer>
   <div class="wrap footer-inner">
     <div class="logo" style="animation:none; opacity:1;">HexaSurvey</div>
-  
     <div class="footer-copy">© 2026 HexaSurvey. Group 6</div>
   </div>
 </footer>
 
 <script>
-  const bar = document.querySelector('.bar')
-  bar.addEventListener('click', ()=>{
-    document.querySelector('.wrappednav').style.display = 'flex'
-  })
-//  const navLists = document.querySelectorAll('')
- // navLists.addEventListener('click', ()=>{
- //    document.querySelector('.wrappednav').style.display = 'none'
- // }) 
+  const bar = document.querySelector('.bar');
+  const closeBtn = document.querySelector('.close-bar');
+  const wrappedNav = document.querySelector('.wrappednav');
+  const mobileLinks = document.querySelectorAll('.nav-linkss a');
+
+  bar.addEventListener('click', () => {
+    wrappedNav.classList.add('open');
+  });
+
+  closeBtn.addEventListener('click', () => {
+    wrappedNav.classList.remove('open');
+  });
+
+  mobileLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      wrappedNav.classList.remove('open');
+    });
+  });
+
   const revealEls = document.querySelectorAll('.reveal');
   const io = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -189,7 +201,6 @@
     });
   }, { threshold: 0.5 });
   counters.forEach(el => counterIO.observe(el));
-
 
   const blob1 = document.getElementById('blob1');
   const blob2 = document.getElementById('blob2');

@@ -3,61 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="surv-land.css">
-    <title>Document</title>
+    <title>About Us - HexaSurvey</title>
 
     <style>
-
-    .the-actual-team{
+    body {
+        padding-bottom: 200px;
+    }
+    .the-actual-team {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr 1fr;
+        margin-top: 40px;
+        place-content: center;
+        min-height: 100vh;
+        align-items: start;
+        justify-items: center;
     }
-    @media (max-width: 800px){
-        .the-actual-team{
+
+    @media (max-width: 800px) {
+        .the-actual-team {
             grid-template-columns: 1fr 1fr;
             row-gap: 50px;
+            place-content: center;
+            min-height: 100vh;
+            align-items: start;
+            justify-items: center;
         }
     }
-    .the-actual-team h3{
-        color: var(--purple-300);
-    }
-    .front-end div{
-        display: flex;
-        flex-direction: row;
-        align-items:center;
-        gap: 12px;
-        margin: 15px;
-    }
-    .front-end img{
-        width: 50px;
-        border-radius: 50%;
-    }
-    .back-end div{
-        display: flex;
-        flex-direction: row;
-        align-items:center;
-        gap: 12px;
-        margin: 15px;
-    }
-    .back-end img{
-        width: 50px;
-        border-radius: 50%;
-    }
-</style>
 
+    .the-actual-team h3 {
+        color: var(--purple-300);
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .front-end div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        margin: 15px;
+    }
+
+    .front-end img {
+        width: 70px;
+        border-radius: 50%;
+    }
+
+    .back-end div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        margin: 15px;
+    }
+
+    .back-end img {
+        width: 70px;
+        border-radius: 50%;
+    }
+
+    @keyframes scroll-reveal {
+        from {
+            opacity: 0;
+            transform: translateY(60px) scale(0.85);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .prince,
+    .the-actual-team h3,
+    .front-end div, 
+    .back-end div {
+        animation: scroll-reveal linear both;
+        animation-timeline: view();
+        animation-range: entry 10% cover 30%;
+    }
+    </style>
 </head>
 
 <header class="nav">
   <div class="nav-inner">
     <div class="logo">Hexa<span class="x">Survey</span></div>
     <ul class="nav-links">
-      <li><a href="index.html">Overview</a></li>
+      <li><a href="index.html#features">Overview</a></li>
       <li><a href="about-us.html" class="active">About us</a></li>
-      <li>Product</li>
-      <li><a href="index.html">Insights</a></li>
-      <li><a href="index.html">Pricing</a></li>
+      <li><a href="index.html">Product</a></li>
+      <li><a href="index.html#metrics">Insights</a></li>
+      <li><a href="index.html#pricing">Pricing</a></li>
     </ul>
-    <a href="auth.html" class="sign-in nav-cta">Sign in</a>
+    <div class="nav-actions">
+      <a href="auth.html" class="sign-in nav-cta">Sign in</a>
+      <div class="bar"><i class="fa-solid fa-bars"></i></div>
+    </div>
+  </div>
+  <div class="wrappednav">
+    <div class="close-bar"><i class="fa-solid fa-xmark"></i></div>
+    <ul class="nav-linkss">
+      <li><a href="index.html#features">Overview</a></li>
+      <li><a href="about-us.html" class="active">About us</a></li>
+      <li><a href="index.html">Product</a></li>
+      <li><a href="index.html#metrics">Insights</a></li>
+      <li><a href="index.html#pricing">Pricing</a></li>
+      <li><a href="auth.html">Sign in</a></li>
+    </ul>
   </div>
 </header>
 
@@ -66,69 +122,94 @@
         <h1 class="headline" style="text-align: center;">
             <span><em>Meet the Team</em></span>
         </h1>
-        <p style="text-align: center; margin-top: 40px; font-size: 20px;"> Meet the amazing minds behind HexaSurvey</p>
+        <p style="text-align: center; margin-top: 40px; font-size: 17px;"> Meet the amazing minds behind HexaSurvey</p>
     </section>
 <br><br><br>
+    <section class="prince">
+        <img src="prince.jpeg" style="width: 200px; border-radius: 50%; display: block; margin-left: auto; margin-right: auto;">
+          <p style="text-align: center; margin-top: 20px; font-size: 20px;">Young Prince</p>
+        <h2 style="text-align: center; margin-top: 8px;">Group Leader</h2>
+    </section>
+
     <section class="the-actual-team">
         <section class="front-end">
             <h3>The Front-End Team</h3>
-            <div><img src="my dp.jpg"> <p> Stephanie Obadan</p></div>
             <div><img src="my dp.jpg"> <p> Abasiofon Bob</p></div>
-            <div><img src="my dp.jpg"> <p> Abraham Victor Bassey</p></div>
-            <div><img src="my dp.jpg"> <p> Sunday Peace Ime</p></div>
-            <div><img src="my dp.jpg"> <p> Kufre Fidelis Amanam</p></div>
-            <div><img src="my dp.jpg"> <p> David Victor</p></div>
-            <div><img src="my dp.jpg"> <p> Roseline Ekpe</p></div>
-            <div><img src="my dp.jpg"> <p> Emmanuel Chima</p></div>
-            <div><img src="my dp.jpg"> <p> Bekar Gospel Emmanuel</p></div>
-            <div><img src="my dp.jpg"> <p> Atakpa Etieno Ofonmbuk</p></div>
-            
+            <div> <p> Stephanie Obadan</p></div>
+            <div> <p> Abraham Bassey</p></div>
+            <div> <p> Sunday Peace Ime</p></div>
+            <div> <p> Kufre Amanam</p></div>
+            <div> <p> David Victor</p></div>
+            <div> <p> Roseline Ekpe</p></div>
+            <div> <p> Emmanuel Chima</p></div>
+            <div> <p> Bekar Emmanuel</p></div>
+            <div> <p> Atakpa Ofonmbuk</p></div>
         </section>
 
         <section class="back-end">
             <h3>Back-End Team</h3>
-            <div><img src="my dp.jpg"> <p> Abasibiangke Nsekpong</p></div>
-            <div><img src="my dp.jpg"> <p> Prince Nwagba Chibueze</p></div>
-            <div><img src="my dp.jpg"> <p> Andikan Bassey</p></div>
-            <div><img src="my dp.jpg"> <p> Emmanuel Vincent Onwe</p></div>
-            <div><img src="my dp.jpg"> <p> Okeke Ifeanyi Uche</p></div>
-            <div><img src="my dp.jpg"> <p> Jumbo Believe</p></div>
-            <div><img src="my dp.jpg"> <p> Kingsley Nsidibe Essien</p></div>
-            <div><img src="my dp.jpg"> <p> Vurasi Bright Baridula</p></div>
-            <div><img src="my dp.jpg"> <p> Nwobodo Joseph Chibueze</p></div>
-            <div><img src="my dp.jpg"> <p> Ernest Favour Uwemedimo</p></div>
-           
+            <div> <img src="my dp.jpg"> <p> Isuho Friday</p></div>
+            <div> <p>Abasibiangke N.</p></div>
+            <div> <p> Prince Chibueze</p></div>
+            <div> <p> Andikan Bassey</p></div>
+            <div> <p> Emmanuel Onwe</p></div>
+            <div> <p> Okeke Uche</p></div>
+            <div> <p> Jumbo Believe</p></div>
+            <div> <p> Kingsley Essien</p></div>
+            <div> <p> Vurasi Baridula</p></div>
+            <div> <p> Nwobodo Chibueze</p></div>
+            <div> <p> Favour Eyo</p></div>
         </section>
 
         <section class="back-end">
              <h3>Testing Team</h3>
-            <div><img src="my dp.jpg"> <p> Eno-obong Sylvanus Umoh</p></div>
-            <div><img src="my dp.jpg"> <p> Ebiefie Okokon Edueno</p></div>
-            <div><img src="my dp.jpg"> <p> Andikan Bassey</p></div>
-            <div><img src="my dp.jpg"> <p> Emmanuel Vincent Onwe</p></div>
-            <div><img src="my dp.jpg"> <p> Okeke Ifeanyi Uche</p></div>
-            <div><img src="my dp.jpg"> <p> Jumbo Believe</p></div>
-            <div><img src="my dp.jpg"> <p> Kingsley Nsidibe Essien</p></div>
-            <div><img src="my dp.jpg"> <p> Vurasi Bright Baridula</p></div>
-            <div><img src="my dp.jpg"> <p> Nwobodo Joseph Chibueze</p></div>
-            <div><img src="my dp.jpg"> <p> Ernest Favour Uwemedimo</p></div>
-           
+            <div><img src="my dp.jpg"> <p> Samuel...</p></div>
+            <div> <p>King Etop</p></div> <div> <p> Ebiefie Edueno</p></div>
+            <div> <p> Desmond</p></div>
+            <div> <p> Noble Jaja</p></div>
+            <div> <p> Andrew</p></div>
+            <div> <p> David Ibanga</p></div>
+            <div> <p> Christian Etim</p></div>
+            <div> <p> Albert Chinedu</p></div>
+            <div> <p> Favour Collins</p></div>
+            <div> <p> Favour Ernest</p></div>
         </section>
 
         <section class="back-end">
              <h3>Documentation Team</h3>
-            <div><img src="my dp.jpg"> <p> Abasibiangke Nsekpong</p></div>
-            <div><img src="my dp.jpg"> <p> Prince Nwagba Chibueze</p></div>
-            <div><img src="my dp.jpg"> <p> Andikan Bassey</p></div>
-            <div><img src="my dp.jpg"> <p> Emmanuel Vincent Onwe</p></div>
-            <div><img src="my dp.jpg"> <p> Okeke Ifeanyi Uche</p></div>
-            <div><img src="my dp.jpg"> <p> Jumbo Believe</p></div>
-            <div><img src="my dp.jpg"> <p> Kingsley Nsidibe Essien</p></div>
-            <div><img src="my dp.jpg"> <p> Vurasi Bright Baridula</p></div>
-            <div><img src="my dp.jpg"> <p> Nwobodo Joseph Chibueze</p></div>
-            <div><img src="my dp.jpg"> <p> Ernest Favour Uwemedimo</p></div>
-           
+            <div> <img src="prince.jpeg"> <p> Prince Chibueze.</p></div>
+            <div> <p> Godknows Friday</p></div>
+            <div> <p> Divine Ime</p></div>
+            <div> <p> Andikan Daniel</p></div>
+            <div> <p> Dara-abasi Joseph</p></div>
+            <div> <p> Mary Imoh </p></div>
+            <div> <p> Kingsley Essien</p></div>
+            <div> <p> Inemesit Anthony</p></div>
+            <div> <p> Esther Nyanga</p></div>
+            <div> <p> Ernest Uwemedimo</p></div>
+            <div> <p> Dakkada FC</p></div>
         </section>
     </section>
+
+    <script>
+      const bar = document.querySelector('.bar');
+      const closeBtn = document.querySelector('.close-bar');
+      const wrappedNav = document.querySelector('.wrappednav');
+      const mobileLinks = document.querySelectorAll('.nav-linkss a');
+
+      bar.addEventListener('click', () => {
+        wrappedNav.classList.add('open');
+      });
+
+      closeBtn.addEventListener('click', () => {
+        wrappedNav.classList.remove('open');
+      });
+
+      mobileLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          wrappedNav.classList.remove('open');
+        });
+      });
+    </script>
 </body>
 </html>

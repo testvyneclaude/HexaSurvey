@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="surv-land.css">
+    <style>
+        body{
+            margin-top: 80px;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+        .inner-card{
+            background-color: var(--bg-elevated);
+            padding: 20px;
+            border-radius: 18px;
+            margin-top: 40px;
+            border: 0.5px solid var(--border);
+        }
+    </style>
+</head>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="logo">Hexa<span class="x">Survey</span></div>
+    <a href="auth.html" class="sign-in nav-cta">Sign out</a>
+  </div>
+  
+</header>
+
+<body>
+    <section class="dashboard">
+        <div class="dashboard-container">
+            <h1>Welcome to the Dashboard</h1><br>
+            <p>Here you can manage your surveys and view analytics.</p>
+            <section class="inner-card">
+                <h2>My Surveys</h2><br>
+                <p>List of surveys you have created will appear here.</p><br><br>
+            <div class="dashboard-actions">
+                <button class="btn btn-primary"><a href="create-survey.html">Create a Survey</a></button>
+               <!-- <button class="btn btn-secondary"><a href="view-surveys.html">View Surveys</a></button> -->
+            </div>
+            </section>
+        </div>
+    </section>
+</body>
+</html>

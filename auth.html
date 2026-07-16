@@ -81,6 +81,20 @@
       </div>
     </div>
 
+    <div class="field-group extra" id="roleGroup">
+      <label>I am a</label>
+      <div class="input-underline" style="border:none;">
+        <label style="font-size:14px; margin-right:16px; cursor:pointer;">
+          <input type="radio" name="role" value="creator" checked style="width:auto; display:inline-block; margin-right:6px;"> Creator
+        </label>
+        <label style="font-size:14px; cursor:pointer;">
+          <input type="radio" name="role" value="respondent" style="width:auto; display:inline-block; margin-right:6px;"> Respondent
+        </label>
+      </div>
+    </div>
+
+    <div class="error-msg" id="formError" style="color:#f87171;"></div>
+
     <button type="submit" class="submit-btn" id="submitBtn">Sign in</button>
   </form>
 
@@ -128,13 +142,30 @@
   });
 
   
+  const API_BASE = 'http://127.0.0.1:5000/api';
+  const redirectTarget = new URLSearchParams(window.location.search).get('redirect');
+
+  const nameInput = document.getElementById('name');
   const emailInput = document.getElementById('email');
   const passwordInput = document.getElementById('password');
+  const confirmInput = document.getElementById('confirm');
   const emailError = document.getElementById('emailError');
   const passwordError = document.getElementById('passwordError');
+  const formError = document.getElementById('formError');
 
-  form.addEventListener('submit', (e) => {
+  function showFormError(msg){
+    formError.textContent = msg;
+    formError.classList.add('show');
+  }
+  function clearFormError(){
+    formError.textContent = '';
+    formError.classList.remove('show');
+  }
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    clearFormError();
+
     let valid = true;
     const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value);
     if (!emailOk){ emailError.classList.add('show'); valid = false; } else { emailError.classList.remove('show'); }
@@ -142,12 +173,83 @@
     const passOk = passwordInput.value.length >= 8;
     if (!passOk){ passwordError.classList.add('show'); valid = false; } else { passwordError.classList.remove('show'); }
 
-    if (valid){
-      submitBtn.textContent = mode === 'signin' ? 'Signing in…' : 'Creating account…';
-      submitBtn.style.opacity = '0.75';
-      setTimeout(() => {
-        submitBtn.textContent = mode === 'signin' ? 'Signed in ✓' : 'Account created ✓';
-      }, 900);
+    if (mode === 'signup' && passOk && confirmInput.value !== passwordInput.value){
+      showFormError('Passwords do not match.');
+      valid = false;
+    }
+    if (mode === 'signup' && !nameInput.value.trim()){
+      showFormError('Please enter your full name.');
+      valid = false;
+    }
+
+    if (!valid) return;
+
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.75';
+
+    try {
+      let response, data;
+
+      if (mode === 'signup'){
+        submitBtn.textContent = 'Creating account…';
+        const role = form.querySelector('input[name="role"]:checked').value;
+        response = await fetch(`${API_BASE}/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            fullname: nameInput.value.trim(),
+            email: emailInput.value.trim(),
+            password: passwordInput.value,
+            role: role
+          })
+        });
+      } else {
+        submitBtn.textContent = 'Signing in…';
+        response = await fetch(`${API_BASE}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            email: emailInput.value.trim(),
+            password: passwordInput.value
+          })
+        });
+      }
+
+      data = await response.json();
+
+      if (!response.ok || !data.success){
+        showFormError(data.message || 'Something went wrong. Please try again.');
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+        submitBtn.textContent = mode === 'signin' ? 'Sign in' : 'Sign up';
+        return;
+      }
+
+      submitBtn.textContent = mode === 'signin' ? 'Signed in ✓' : 'Account created ✓';
+
+      if (mode === 'signup'){
+        // Registration succeeded......switch to sign in so the new user can log in
+        setTimeout(() => {
+          mode = 'signin';
+          render();
+          submitBtn.disabled = false;
+          submitBtn.style.opacity = '1';
+        }, 900);
+      } else {
+        // Sign in succeeded... at this point it redirects to dashboard or wherever the person using wanted to go.
+        setTimeout(() => {
+          window.location.href = redirectTarget || 'dashboard.html';
+        }, 600);
+      }
+
+    } catch (err) {
+      console.error('Auth request failed:', err);
+      showFormError('Could not reach the server. Is the Flask backend running on http://127.0.0.1:5000?');
+      submitBtn.disabled = false;
+      submitBtn.style.opacity = '1';
+      submitBtn.textContent = mode === 'signin' ? 'Sign in' : 'Sign up';
     }
   });
 
@@ -155,6 +257,7 @@
     inp.addEventListener('input', () => {
       emailError.classList.remove('show');
       passwordError.classList.remove('show');
+      clearFormError();
     });
   });
 </script>

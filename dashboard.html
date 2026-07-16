@@ -24,7 +24,7 @@
 <header class="nav">
   <div class="nav-inner">
     <div class="logo">Hexa<span class="x">Survey</span></div>
-    <a href="auth.html" class="sign-in nav-cta" style="display: block;">Sign out</a>
+    <a href="#" id="signOutBtn" class="sign-in nav-cta" style="display: block;">Sign out</a>
   </div>
   
 </header>
@@ -36,7 +36,9 @@
             <p>Here you can manage your surveys and view analytics.</p>
             <section class="inner-card">
                 <h2>My Surveys</h2><br>
-                <p>List of surveys you have created will appear here.</p><br><br>
+                <div id="surveyList">
+                    <p>Loading your surveys…</p>
+                </div><br><br>
             <div class="dashboard-actions">
                 <button class="btn btn-primary"><a href="create-survey.html">+ Create a Survey</a></button>
                <!-- <button class="btn btn-secondary"><a href="view-surveys.html">View Surveys</a></button> -->
@@ -44,5 +46,91 @@
             </section>
         </div>
     </section>
+
+    <script>
+        const API_BASE = 'http://127.0.0.1:5000/api';
+        const surveyListEl = document.getElementById('surveyList');
+        const signOutBtn = document.getElementById('signOutBtn');
+
+        function escapeHtml(str){
+            const div = document.createElement('div');
+            div.textContent = str == null ? '' : String(str);
+            return div.innerHTML;
+        }
+
+        function renderSurveys(surveys){
+            if (!surveys || surveys.length === 0){
+                surveyListEl.innerHTML = '<p>You haven\'t created any surveys yet.</p>';
+                return;
+            }
+
+            surveyListEl.innerHTML = surveys.map(s => {
+                const statusLabel = s.status === 'published' ? 'Published' : 'Draft';
+                const shareLine = s.status === 'published' && s.share_token
+                    ? `<p>Share link: <code>share.html?token=${escapeHtml(s.share_token)}</code></p>`
+                    : '';
+                const analyticsLink = s.status === 'published'
+                    ? ` &middot; <a href="analytics.html?id=${s.id}">View analytics</a>`
+                    : '';
+
+                return `
+                    <div class="inner-card" style="margin-top:16px;">
+                        <h3>${escapeHtml(s.title)}</h3>
+                        <p>${escapeHtml(s.description || '')}</p>
+                        <p>Status: <strong>${statusLabel}</strong></p>
+                        ${shareLine}
+                        <p><a href="create-survey.html?id=${s.id}">Edit survey</a>${analyticsLink}</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function loadSurveys(){
+            try {
+                const response = await fetch(`${API_BASE}/surveys`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                if (response.status === 401){
+                    window.location.href = 'auth.html';
+                    return;
+                }
+                if (response.status === 403){
+                    surveyListEl.innerHTML = '<p>This dashboard is for survey creators. Your account doesn\'t have creator access.</p>';
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success){
+                    surveyListEl.innerHTML = `<p>Could not load surveys: ${escapeHtml(data.message || 'Unknown error')}</p>`;
+                    return;
+                }
+
+                renderSurveys(data.data);
+
+            } catch (err){
+                console.error('Failed to load surveys:', err);
+                surveyListEl.innerHTML = '<p>Could not reach the server. Is the Flask backend running on http://127.0.0.1:5000?</p>';
+            }
+        }
+
+        signOutBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                await fetch(`${API_BASE}/auth/logout`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+            } catch (err){
+                console.error('Logout request failed:', err);
+            } finally {
+                window.location.href = 'auth.html';
+            }
+        });
+
+        loadSurveys();
+    </script>
 </body>
 </html>

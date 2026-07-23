@@ -12,17 +12,17 @@
     <style>
         *{
             box-sizing: border-box;
-            margin-top:10px;
-            padding: 0px;
+            margin-top:0;
+            padding: 0;
         }
         body{
             margin-top: 80px;
             padding: 30px;
         }
         .create{
-            background-color: var(--bg-elevated);
-            padding: 20px;
-            border-radius: 18px;
+            background-color: rgb(57, 52, 52);
+            padding: 30px;
+            border-radius: 5px;
             margin-top: 40px;
             border: 0.5px solid var(--border);
             
@@ -36,7 +36,7 @@
             border: none;
             border-top: 0.5px solid var(--border);
             border-bottom: 0.5px solid var(--muted);
-            border-radius: 12px;
+            border-radius: 4px;
             width: 100%;
             color: white;
         }
@@ -66,22 +66,54 @@
          display: inline-block;
          margin-right: 10px;
         }
+        .headline{
+            color:black
+        }
+        .sub-btn:hover{
+
+        }
     </style>
 </head>
 <body>
-    <header class="nav">
-      <div class="nav-inner">
-        <div class="logo">Hexa<span class="x">Survey</span></div>
-        <a href="dashboard.html" class="sign-in nav-cta">Back to Dashboard</a>
-      </div>
-    </header>
+  
+<header class="nav">
+  <div class="nav-inner">
+    <div class="logo">Hexa<span class="x">Survey</span></div>
+    <ul class="nav-links">
+      <li><a href="#features">Overview</a></li>
+      <li><a href="about-us.html">About us</a></li>
+      <li><a href="#" class="active">Product</a></li>
+      <li><a href="#metrics">Insights</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+    </ul>
+    <!-- Inside <header class="nav"> -> <div class="nav-actions"> -->
+<div class="nav-actions">
+  <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme">
+    <i class="fa-solid fa-sun" id="themeIcon"></i>
+  </button>
+  <a href="auth.html" class="sign-in nav-cta">Sign in</a>
+  <div class="bar"><i class="fa-solid fa-bars"></i></div>
+</div>
+  </div>
+  <div class="wrappednav">
+    <div class="close-bar"><i class="fa-solid fa-xmark"></i></div>
+    <ul class="nav-linkss">
+      <li><a href="#features">Overview</a></li>
+      <li><a href="about-us.html">About us</a></li>
+      <li><a href="#" class="active">Product</a></li>
+      <li><a href="#metrics">Insights</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="auth.html">Sign in</a></li>
+    </ul>
+  </div>
+</header>
 
-    <h2 class="headline" style="text-align: center; margin-top: 20px;">Create Your Survey in Minutes</h2>
+    <h1 class="headline" style="text-align: center; margin-top: 20px;">Create Your Survey in Minutes</h1>
 
     <section class="create">
-        <label>Survey Title</label><br>
+        <label>Survey Title</label><br><br>
         <input type="text" id="surveyTitle" placeholder="e.g Customer Satisfaction Survey"><br><br>
-        <label>Description (optional)</label><br>
+        <label>Description (optional)</label><br><br>
         <input type="text" id="surveyDescription" placeholder="What is this survey about?">
 
         <div id="formStatus" style="margin-top:15px; color:#f87171;"></div>
@@ -92,7 +124,7 @@
         <button onclick="addQuestion('paragraph')">+ Add Paragraph Question</button>
         <button onclick="addQuestion('mcq')">+ Add Multiple Choice Question</button>
         
-        <button onclick="submitSurvey()" style="background-color: var(--purple-700); color: white; margin-top: 30px; padding: 15px 30px; font-size: 18px; width: 100%; cursor: pointer;">
+        <button onclick="submitSurvey()"  class="sub-btn"   style="border:1px solid white;background-color: rgb(57, 52, 52); color: white; margin-top: 30px; padding: 12px 25px; font-size: 18px; width: 100%; cursor: pointer;">
     Submit & Create Survey
 </button>
     </section>
@@ -289,7 +321,7 @@ async function submitSurvey() {
     const questionsData = collectQuestionsPayload();
 
     try {
-        // All this part just means if this is a brand new survey it should create the draft first to get an id.
+        // All this part just mean say if na brand new survey e suppose create the draft first to get an id.
         if (!surveyId) {
             const createResponse = await fetch(`${API_BASE}/surveys`, {
                 method: 'POST',

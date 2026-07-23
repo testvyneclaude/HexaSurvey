@@ -26,7 +26,7 @@
 
 <div class="card" id="card">
   <div class="mark-wrap">
-    <svg class="mark" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+   <!--- <svg class="mark" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <defs>
         <linearGradient id="g1" x1="0" y1="0" x2="100" y2="100">
           <stop offset="0%" stop-color="#5eead4"/>
@@ -41,7 +41,7 @@
       <path class="p1" d="M8 10 L46 50 L8 90" stroke="url(#g1)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
       <path class="p2" d="M92 10 L54 50 L92 90" stroke="url(#g2)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
       <path class="p3" d="M50 38 L50 62" stroke="#f0abfc" stroke-width="10" stroke-linecap="round"/>
-    </svg>
+    </svg> -->
   </div>
 
   <h1 class="title" id="formTitle">Sign in</h1>
@@ -50,7 +50,7 @@
     <div class="field-group extra" id="nameGroup">
       <label for="name">Full name</label>
       <div class="input-underline">
-        <input type="text" id="name" placeholder="Ente your name" autocomplete="name">
+        <input type="text" id="name" placeholder="Enter your name" autocomplete="name">
         <div class="line"></div>
       </div>
     </div>
@@ -100,7 +100,7 @@
 
   <div class="switch-line" id="switchLine">
     Don't have an account?
-    <button type="button" id="switchBtn">Sign up
+    <button type="button" id="switchBtn" color="white">Sign up
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
   </div>
@@ -123,7 +123,8 @@
       submitBtn.textContent = 'Sign in';
       switchLine.innerHTML = "Don't have an account? ";
       switchLine.appendChild(switchBtn);
-      switchBtn.innerHTML = 'Sign up <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      switchBtn.innerHTML = 'Sign up';
+      switchBtn.style.color = 'white'
     } else {
       card.classList.add('mode-signup');
       formTitle.textContent = 'Create your account';

@@ -13,6 +13,7 @@
     <style>
     body {
         padding-bottom: 200px;
+        color: black;
     }
     .the-actual-team {
         display: grid;
@@ -36,7 +37,7 @@
     }
 
     .the-actual-team h3 {
-        color: var(--purple-300);
+       color: linear-gradient(90deg, black,  rgba(10,6,18,0.35));
         text-align: center;
         margin-bottom: 20px;
     }
@@ -93,25 +94,29 @@
   <div class="nav-inner">
     <div class="logo">Hexa<span class="x">Survey</span></div>
     <ul class="nav-links">
-      <li><a href="index.html#features">Overview</a></li>
-      <li><a href="about-us.html" class="active">About us</a></li>
-      <li><a href="index.html">Product</a></li>
-      <li><a href="index.html#metrics">Insights</a></li>
-      <li><a href="index.html#pricing">Pricing</a></li>
+      <li><a href="#features">Overview</a></li>
+      <li><a href="about-us.html">About us</a></li>
+      <li><a href="#" class="active">Product</a></li>
+      <li><a href="#metrics">Insights</a></li>
+      <li><a href="#pricing">Pricing</a></li>
     </ul>
-    <div class="nav-actions">
-      <a href="auth.html" class="sign-in nav-cta">Sign in</a>
-      <div class="bar"><i class="fa-solid fa-bars"></i></div>
-    </div>
+    <!-- Inside <header class="nav"> -> <div class="nav-actions"> -->
+<div class="nav-actions">
+  <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme">
+    <i class="fa-solid fa-sun" id="themeIcon"></i>
+  </button>
+  <a href="auth.html" class="sign-in nav-cta">Sign in</a>
+  <div class="bar"><i class="fa-solid fa-bars"></i></div>
+</div>
   </div>
   <div class="wrappednav">
     <div class="close-bar"><i class="fa-solid fa-xmark"></i></div>
     <ul class="nav-linkss">
-      <li><a href="index.html#features">Overview</a></li>
-      <li><a href="about-us.html" class="active">About us</a></li>
-      <li><a href="index.html">Product</a></li>
-      <li><a href="index.html#metrics">Insights</a></li>
-      <li><a href="index.html#pricing">Pricing</a></li>
+      <li><a href="#features">Overview</a></li>
+      <li><a href="about-us.html">About us</a></li>
+      <li><a href="#" class="active">Product</a></li>
+      <li><a href="#metrics">Insights</a></li>
+      <li><a href="#pricing">Pricing</a></li>
       <li><a href="auth.html">Sign in</a></li>
     </ul>
   </div>
@@ -127,7 +132,7 @@
 <br><br><br>
     <section class="prince">
         <img src="prince.jpeg" style="width: 200px; border-radius: 50%; display: block; margin-left: auto; margin-right: auto;">
-          <p style="text-align: center; margin-top: 20px; font-size: 20px;">Young Prince</p>
+          <p style="text-align: center; margin-top: 20px; font-size: 20px;">Samuel Adewoye</p>
         <h2 style="text-align: center; margin-top: 8px;">Group Leader</h2>
     </section>
 
@@ -163,7 +168,7 @@
 
         <section class="back-end">
              <h3>Testing Team</h3>
-            <div><img src="my dp.jpg"> <p> Samuel...</p></div>
+            <div><img src="prince.jpeg"> <p> Samuel Abatai</p></div>
             <div> <p>King Etop</p></div> <div> <p> Ebiefie Edueno</p></div>
             <div> <p> Desmond</p></div>
             <div> <p> Noble Jaja</p></div>

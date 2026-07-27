@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>Dashboard</title>
     <link rel="stylesheet" href="surv-land.css">
     <style>
@@ -11,12 +15,55 @@
             padding: 30px;
             box-sizing: border-box;
         }
+        .dashboard-container{
+            max-width: var(--maxw);
+            margin: 0 auto;
+        }
         .inner-card{
             background-color: var(--bg-elevated);
             padding: 20px;
-            border-radius: 18px;
             margin-top: 40px;
-            border: 0.5px solid var(--border);
+            border: 1px solid var(--border);
+            color: var(--white);
+        }
+        .inner-card h3{
+            color: var(--white);
+        }
+        .inner-card p{
+            color: var(--muted);
+        }
+        .share-row{
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .share-row code{
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--white);
+            background: var(--bg-card);
+            padding: 6px 10px;
+            border: 1px solid var(--border);
+            word-break: break-all;
+        }
+        .copy-btn{
+            background: transparent;
+            border: 1px solid var(--white);
+            color: var(--white);
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-family: var(--font-body);
+            transition: background .3s, color .3s;
+        }
+        .copy-btn:hover{
+            background: var(--white);
+            color: var(--bg);
+        }
+        .dashboard-actions{
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -24,16 +71,20 @@
 <header class="nav">
   <div class="nav-inner">
     <div class="logo">Hexa<span class="x">Survey</span></div>
-    <a href="#" id="signOutBtn" class="sign-in nav-cta" style="display: block;">Sign out</a>
+    <div class="nav-actions">
+      <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme">
+        <i class="fa-solid fa-sun" id="themeIcon"></i>
+      </button>
+      <a href="#" id="signOutBtn" class="sign-in nav-cta" style="display: block;">Sign out</a>
+    </div>
   </div>
-  
 </header>
 
 <body>
     <section class="dashboard">
         <div class="dashboard-container">
-            <h1>Welcome to the Dashboard</h1><br>
-            <p>Here you can manage your surveys and view analytics.</p>
+            <h1 class="headline" style="text-align: center;">Dashboard</h1><br>
+            <p style="text-align: center;">Here you can manage your surveys and view analytics.</p>
             <section class="inner-card">
                 <h2>My Surveys</h2><br>
                 <div id="surveyList">
@@ -47,6 +98,7 @@
         </div>
     </section>
 
+    <script src="theme.js"></script>
     <script>
         const API_BASE = 'http://127.0.0.1:5000/api';
         const surveyListEl = document.getElementById('surveyList');
@@ -58,6 +110,20 @@
             return div.innerHTML;
         }
 
+        function copyShareLink(token, btn){
+            const url = `${window.location.origin}${window.location.pathname.replace('dashboard.html','')}share.html?token=${token}`;
+            navigator.clipboard.writeText(url).then(() => {
+                const original = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(() => { btn.textContent = original; }, 1500);
+            }).catch(() => {
+                const original = btn.textContent;
+                btn.textContent = 'Copy failed';
+                setTimeout(() => { btn.textContent = original; }, 1500);
+            });
+        }
+        window.copyShareLink = copyShareLink;
+
         function renderSurveys(surveys){
             if (!surveys || surveys.length === 0){
                 surveyListEl.innerHTML = '<p>You haven\'t created any surveys yet.</p>';
@@ -66,8 +132,16 @@
 
             surveyListEl.innerHTML = surveys.map(s => {
                 const statusLabel = s.status === 'published' ? 'Published' : 'Draft';
-                const shareLine = s.status === 'published' && s.share_token
-                    ? `<p>Share link: <code>share.html?token=${escapeHtml(s.share_token)}</code></p>`
+                const shareUrl = s.status === 'published' && s.share_token
+                    ? `${window.location.origin}${window.location.pathname.replace('dashboard.html','')}share.html?token=${escapeHtml(s.share_token)}`
+                    : '';
+                const shareBlock = s.status === 'published' && s.share_token
+                    ? `
+                        <div class="share-row">
+                            <code>${escapeHtml(shareUrl)}</code>
+                            <button type="button" class="copy-btn" onclick="copyShareLink('${escapeHtml(s.share_token)}', this)">Copy link</button>
+                        </div>
+                    `
                     : '';
                 const analyticsLink = s.status === 'published'
                     ? ` &middot; <a href="analytics.html?id=${s.id}">View analytics</a>`
@@ -78,7 +152,7 @@
                         <h3>${escapeHtml(s.title)}</h3>
                         <p>${escapeHtml(s.description || '')}</p>
                         <p>Status: <strong>${statusLabel}</strong></p>
-                        ${shareLine}
+                        ${shareBlock}
                         <p><a href="create-survey.html?id=${s.id}">Edit survey</a>${analyticsLink}</p>
                     </div>
                 `;

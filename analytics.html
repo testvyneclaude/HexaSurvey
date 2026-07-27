@@ -3,92 +3,201 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HexaSurvey — Analytics</title>
+<title>Analytics — HexaSurvey</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="surv-land.css">
 <style>
-    *{ box-sizing: border-box; }
     body{ margin-top: 80px; padding: 30px; }
-    .analytics-wrap{ max-width: 820px; margin: 40px auto; }
-    .inner-card{
-        background-color: var(--bg-elevated);
-        padding: 26px;
-        border-radius: 18px;
-        margin-top: 24px;
-        border: 0.5px solid var(--border);
+    .analytics-wrap{ max-width: 820px; margin: 0 auto 80px; }
+
+    .analytics-head{ margin-top: 20px; }
+    .analytics-head p{ color: var(--muted); margin-top: 8px; }
+
+    .summary-row{
+        display: flex;
+        gap: 16px;
+        margin-top: 30px;
+        flex-wrap: wrap;
     }
-    .summary-row{ display:flex; gap: 16px; }
     .summary-card{
         flex: 1;
-        background: var(--bg-card);
+        min-width: 160px;
         border: 1px solid var(--border);
-        border-radius: 14px;
+        background: var(--bg-elevated);
         padding: 20px;
-        text-align: center;
     }
     .summary-card .num{
-        font-family: var(--font-mono); font-size: 1.8rem; font-weight: 600; color: var(--purple-300);
+        font-family: var(--font-mono);
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--white);
     }
-    .summary-card .label{ color: var(--muted-dim); font-size: 0.85rem; margin-top: 6px; }
+    .summary-card .label{
+        color: var(--muted-dim);
+        font-size: 0.85rem;
+        margin-top: 6px;
+    }
+
+    .share-box{
+        margin-top: 30px;
+        border: 1px solid var(--border);
+        background: var(--bg-elevated);
+        padding: 20px;
+    }
+    .share-box h3{
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        color: var(--white);
+        margin-bottom: 12px;
+    }
+    .share-row{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .share-row code{
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        color: var(--white);
+        background: var(--bg-card);
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        word-break: break-all;
+        flex: 1;
+        min-width: 200px;
+    }
+    .copy-btn{
+        background: transparent;
+        border: 1px solid var(--white);
+        color: var(--white);
+        padding: 8px 16px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        font-family: var(--font-body);
+        transition: background .3s, color .3s;
+    }
+    .copy-btn:hover{ background: var(--white); color: var(--bg); }
 
     .question-block{
-        background: var(--bg-card);
+        margin-top: 30px;
         border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 22px;
-        margin-bottom: 18px;
+        background: var(--bg-elevated);
+        padding: 24px;
     }
     .question-block h3{
-        font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; margin-bottom: 16px;
+        font-family: var(--font-display);
+        font-size: 1.05rem;
+        color: var(--white);
+        margin-bottom: 4px;
     }
-    .bar-row{ margin-bottom: 12px; }
-    .bar-row .bar-labels{
-        display: flex; justify-content: space-between; font-size: 0.88rem; color: var(--muted); margin-bottom: 6px;
+    .question-meta{
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--muted-dim);
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        margin-bottom: 16px;
+        display: block;
     }
-    .bar-track{
-        width: 100%; height: 10px; background: var(--bg-elevated); border-radius: 999px; overflow: hidden;
+
+    .option-bar-row{
+        margin-bottom: 14px;
     }
-    .bar-fill{
-        height: 100%; border-radius: 999px;
-        background: linear-gradient(90deg, var(--purple-300), var(--purple-500));
-        transition: width 0.6s var(--ease-out);
+    .option-bar-label{
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        color: var(--white);
+        margin-bottom: 6px;
     }
-    .no-answers{ color: var(--muted-dim); font-size: 0.9rem; }
-    .state-msg{ color: var(--muted); text-align: center; padding: 40px 0; }
-    .back-link{ color: var(--muted); font-size: 0.9rem; }
-    .back-link:hover{ color: var(--white); }
+    .option-bar-track{
+        width: 100%;
+        height: 8px;
+        border: 1px solid var(--border);
+        background: var(--bg-card);
+    }
+    .option-bar-fill{
+        height: 100%;
+        background: var(--white);
+    }
+
+    .text-answers{
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-height: 320px;
+        overflow-y: auto;
+    }
+    .text-answer{
+        border-top: 1px solid var(--border);
+        padding-top: 10px;
+        color: var(--muted);
+        font-size: 0.92rem;
+    }
+    .text-answer:first-child{ border-top: none; padding-top: 0; }
+
+    .state-msg{ color: var(--muted); text-align: center; padding: 60px 0; }
+    .back-nav{ display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.9rem; margin-top: 20px; }
+    .back-nav:hover{ color: var(--white); }
 </style>
 </head>
-<body>
 
 <header class="nav">
   <div class="nav-inner">
     <div class="logo">Hexa<span class="x">Survey</span></div>
-    <a href="dashboard.html" class="sign-in nav-cta">Dashboard</a>
+    <div class="nav-actions">
+      <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme">
+        <i class="fa-solid fa-sun" id="themeIcon"></i>
+      </button>
+      <a href="dashboard.html" class="sign-in nav-cta">Dashboard</a>
+    </div>
   </div>
 </header>
 
-<div class="analytics-wrap">
-    <a href="dashboard.html" class="back-link">&larr; Back to dashboard</a>
+<body>
+    <div class="analytics-wrap">
+        <a href="dashboard.html" class="back-nav"><i class="fa-solid fa-arrow-left"></i> Back to dashboard</a>
 
-    <div id="loadingState" class="state-msg">Loading analytics…</div>
+        <div id="loadingState" class="state-msg">Loading analytics…</div>
 
-    <div id="analyticsContent" style="display:none;">
-        <h1 id="surveyTitle" class="headline" style="font-size: 2rem; margin-top: 16px;"></h1>
-
-        <div class="summary-row" style="margin-top: 20px;">
-            <div class="summary-card">
-                <div class="num" id="totalResponses">0</div>
-                <div class="label">Total responses</div>
+        <div id="analyticsContent" style="display:none;">
+            <div class="analytics-head">
+                <h1 class="headline" id="surveyTitle" style="font-size: 2rem;"></h1>
+                <p id="surveyDescription"></p>
             </div>
+
+            <div class="summary-row">
+                <div class="summary-card">
+                    <div class="num" id="responseCount">0</div>
+                    <div class="label">total responses</div>
+                </div>
+                <div class="summary-card">
+                    <div class="num" id="questionCount">0</div>
+                    <div class="label">questions</div>
+                </div>
+                <div class="summary-card">
+                    <div class="num" id="completionRate">—</div>
+                    <div class="label">completion rate</div>
+                </div>
+            </div>
+
+            <div class="share-box">
+                <h3>Share this survey</h3>
+                <div class="share-row">
+                    <code id="shareUrl"></code>
+                    <button type="button" class="copy-btn" id="copyShareBtn">Copy link</button>
+                </div>
+            </div>
+
+            <div id="questionsAnalytics"></div>
         </div>
-
-        <div id="questionsContainer" style="margin-top: 30px;"></div>
     </div>
-</div>
 
+<script src="theme.js"></script>
 <script>
     const API_BASE = 'http://127.0.0.1:5000/api';
     const params = new URLSearchParams(window.location.search);
@@ -96,9 +205,7 @@
 
     const loadingState = document.getElementById('loadingState');
     const analyticsContent = document.getElementById('analyticsContent');
-    const surveyTitleEl = document.getElementById('surveyTitle');
-    const totalResponsesEl = document.getElementById('totalResponses');
-    const questionsContainer = document.getElementById('questionsContainer');
+    const questionsAnalyticsEl = document.getElementById('questionsAnalytics');
 
     function escapeHtml(str){
         const div = document.createElement('div');
@@ -112,38 +219,65 @@
         analyticsContent.style.display = 'none';
     }
 
-    function renderQuestionBlock(q){
+    function renderMcqQuestion(q, totalResponses){
+        const counts = q.answer_counts || {};
+        const options = q.options || Object.keys(counts);
+        const maxCount = Math.max(1, ...options.map(opt => counts[opt] || 0));
+
+        const bars = options.map(opt => {
+            const count = counts[opt] || 0;
+            const pct = totalResponses > 0 ? Math.round((count / totalResponses) * 100) : 0;
+            const widthPct = Math.round((count / maxCount) * 100);
+            return `
+                <div class="option-bar-row">
+                    <div class="option-bar-label">
+                        <span>${escapeHtml(opt)}</span>
+                        <span>${count} &middot; ${pct}%</span>
+                    </div>
+                    <div class="option-bar-track">
+                        <div class="option-bar-fill" style="width:${widthPct}%;"></div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        return bars || '<p style="color: var(--muted);">No responses yet.</p>';
+    }
+
+    function renderTextQuestion(q){
+        const answers = q.text_answers || [];
+        if (answers.length === 0){
+            return '<p style="color: var(--muted);">No responses yet.</p>';
+        }
+        return `<div class="text-answers">${answers.map(a => `<div class="text-answer">${escapeHtml(a)}</div>`).join('')}</div>`;
+    }
+
+    function renderQuestion(q, totalResponses){
         const block = document.createElement('div');
         block.className = 'question-block';
 
-        let barsHtml = '';
-        if (q.results && q.results.length){
-            barsHtml = q.results.map(r => `
-                <div class="bar-row">
-                    <div class="bar-labels">
-                        <span>${escapeHtml(r.option)}</span>
-                        <span>${r.count} &middot; ${r.percentage}%</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="bar-fill" style="width:${r.percentage}%;"></div>
-                    </div>
-                </div>
-            `).join('');
-        } else {
-            barsHtml = '<p class="no-answers">No responses yet for this question.</p>';
-        }
+        const typeLabelMap = {
+            short_answer: 'SHORT ANSWER',
+            paragraph: 'PARAGRAPH',
+            multiple_choice: 'MULTIPLE CHOICE'
+        };
+
+        const body = q.question_type === 'multiple_choice'
+            ? renderMcqQuestion(q, totalResponses)
+            : renderTextQuestion(q);
 
         block.innerHTML = `
+            <span class="question-meta">${typeLabelMap[q.question_type] || q.question_type}${q.required ? ' &middot; REQUIRED' : ''}</span>
             <h3>${escapeHtml(q.question)}</h3>
-            ${barsHtml}
+            <div style="margin-top:16px;">${body}</div>
         `;
 
-        questionsContainer.appendChild(block);
+        questionsAnalyticsEl.appendChild(block);
     }
 
     async function loadAnalytics(){
         if (!surveyId){
-            showState('No survey specified.');
+            showState('No survey selected.');
             return;
         }
 
@@ -158,26 +292,67 @@
                 return;
             }
             if (response.status === 403){
-                showState('You can only view analytics for surveys you own.');
+                showState('You don\'t have access to this survey\'s analytics.');
                 return;
             }
             if (response.status === 404){
-                showState('Survey not found.');
+                showState('This survey could not be found.');
                 return;
             }
 
             const data = await response.json();
 
-            if (!response.ok || (data.success === false)){
+            if (!response.ok || !data.success){
                 showState(data.message || 'Could not load analytics.');
                 return;
             }
 
-            const payload = data.data ? data.data : data;
+            const survey = data.data;
 
-            surveyTitleEl.textContent = payload.title || `Survey #${surveyId}`;
-            totalResponsesEl.textContent = payload.total_responses ?? 0;
-            (payload.questions || []).forEach(renderQuestionBlock);
+            document.getElementById('surveyTitle').textContent = survey.title || 'Untitled survey';
+            document.getElementById('surveyDescription').textContent = survey.description || '';
+
+            const totalResponses = survey.response_count || 0;
+            const questions = survey.questions || [];
+
+            document.getElementById('responseCount').textContent = totalResponses;
+            document.getElementById('questionCount').textContent = questions.length;
+
+            const completion = survey.completion_rate;
+            document.getElementById('completionRate').textContent = (completion !== undefined && completion !== null)
+                ? `${completion}%`
+                : '—';
+
+            const shareUrl = survey.share_token
+                ? `${window.location.origin}${window.location.pathname.replace('analytics.html', '')}share.html?token=${survey.share_token}`
+                : 'Not published yet';
+            document.getElementById('shareUrl').textContent = shareUrl;
+
+            const copyBtn = document.getElementById('copyShareBtn');
+            if (!survey.share_token){
+                copyBtn.disabled = true;
+                copyBtn.style.opacity = '0.5';
+                copyBtn.style.cursor = 'not-allowed';
+            } else {
+                copyBtn.addEventListener('click', () => {
+                    navigator.clipboard.writeText(shareUrl).then(() => {
+                        const original = copyBtn.textContent;
+                        copyBtn.textContent = 'Copied!';
+                        setTimeout(() => { copyBtn.textContent = original; }, 1500);
+                    }).catch(() => {
+                        const original = copyBtn.textContent;
+                        copyBtn.textContent = 'Copy failed';
+                        setTimeout(() => { copyBtn.textContent = original; }, 1500);
+                    });
+                });
+            }
+
+            questionsAnalyticsEl.innerHTML = '';
+            if (questions.length === 0){
+                questionsAnalyticsEl.innerHTML = '<p class="state-msg">This survey has no questions yet.</p>';
+            } else {
+                questions.forEach(q => renderQuestion(q, totalResponses));
+            }
 
             loadingState.style.display = 'none';
             analyticsContent.style.display = 'block';
@@ -190,6 +365,5 @@
 
     loadAnalytics();
 </script>
-
 </body>
 </html>

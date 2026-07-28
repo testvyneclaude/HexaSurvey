@@ -84,7 +84,8 @@
     <section class="dashboard">
         <div class="dashboard-container">
             <h1 class="headline" style="text-align: center;">Dashboard</h1><br>
-            <p style="text-align: center;">Here you can manage your surveys and view analytics.</p>
+             <p style="text-align: center;">Here you can manage your surveys and view analytics.</p>
+            <section class="inner-card" id="latestShare" hidden></section>
             <section class="inner-card">
                 <h2>My Surveys</h2><br>
                 <div id="surveyList">
@@ -102,6 +103,7 @@
     <script src="api.js"></script>
     <script>
         const surveyListEl = document.getElementById('surveyList');
+        const latestShareEl = document.getElementById('latestShare');
         const signOutBtn = document.getElementById('signOutBtn');
 
         if (!isLoggedIn()){
@@ -127,6 +129,33 @@
             });
         }
         window.copyShareLink = copyShareLink;
+
+        function renderLatestShare(){
+            let latestShare;
+            try {
+                latestShare = JSON.parse(localStorage.getItem('hexasurvey_latest_share'));
+            } catch (error) {
+                localStorage.removeItem('hexasurvey_latest_share');
+                return;
+            }
+
+            if (!latestShare || !latestShare.token) return;
+
+            const shareUrl = `${window.location.origin}${window.location.pathname.replace('dashboard.html', '')}share.html?token=${encodeURIComponent(latestShare.token)}`;
+            latestShareEl.hidden = false;
+            latestShareEl.innerHTML = `
+                <h2>Share your survey</h2>
+                <p>${escapeHtml(latestShare.title || 'Your new survey')} is ready to share.</p>
+                <div class="share-row">
+                    <code>${escapeHtml(shareUrl)}</code>
+                    <button type="button" class="copy-btn" id="copyLatestShare">Copy link</button>
+                    <a href="${escapeHtml(shareUrl)}" class="copy-btn">Open survey</a>
+                </div>
+            `;
+            document.getElementById('copyLatestShare').addEventListener('click', function(){
+                copyShareLink(latestShare.token, this);
+            });
+        }
 
         function renderSurveys(surveys){
             if (!surveys || surveys.length === 0){
@@ -200,6 +229,7 @@
             }
         });
 
+        renderLatestShare();
         loadSurveys();
     </script>
 </body>

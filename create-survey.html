@@ -343,7 +343,11 @@ async function submitSurvey() {
                 return;
             }
 
-            window.location.href = `share.html?token=${encodeURIComponent(shareToken)}`;
+            localStorage.setItem('hexasurvey_latest_share', JSON.stringify({
+                title: surveyTitle,
+                token: shareToken
+            }));
+            window.location.href = 'dashboard.html';
             return;
         }
 

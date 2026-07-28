@@ -165,7 +165,7 @@
 
         async function loadSurveys(){
             try {
-                const response = await apiFetch('/surveys', { method: 'GET' });
+                const response = await apiFetch('/surveys/', { method: 'GET' });
 
                 if (response.status === 403){
                     surveyListEl.innerHTML = '<p>This dashboard is for survey creators. Your account doesn\'t have creator access.</p>';

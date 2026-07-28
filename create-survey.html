@@ -337,8 +337,13 @@ async function submitSurvey() {
                 setStatus(createData.message || 'Could not create the survey.');
                 return;
             }
-            alert(`Survey created! Share token: ${createData.data.share_token}`);
-            window.location.href = 'dashboard.html';
+            const shareToken = createData.data && createData.data.share_token;
+            if (!shareToken) {
+                setStatus('Survey was created, but the server did not return a share token.');
+                return;
+            }
+
+            window.location.href = `share.html?token=${encodeURIComponent(shareToken)}`;
             return;
         }
 

@@ -198,8 +198,11 @@
     </div>
 
 <script src="theme.js"></script>
+<script src="api.js"></script>
 <script>
-    const API_BASE = 'http://127.0.0.1:5000/api';
+    if (!isLoggedIn()){
+        window.location.href = 'auth.html';
+    }
     const params = new URLSearchParams(window.location.search);
     const surveyId = params.get('id');
 
@@ -282,15 +285,8 @@
         }
 
         try {
-            const response = await fetch(`${API_BASE}/surveys/${surveyId}/analytics`, {
-                method: 'GET',
-                credentials: 'include'
-            });
+            const response = await apiFetch(`/surveys/${surveyId}/analytics`, { method: 'GET' });
 
-            if (response.status === 401){
-                window.location.href = 'auth.html';
-                return;
-            }
             if (response.status === 403){
                 showState('You don\'t have access to this survey\'s analytics.');
                 return;
@@ -358,8 +354,9 @@
             analyticsContent.style.display = 'block';
 
         } catch (err){
+            if (err.message && err.message.includes('Unauthorized')) return;
             console.error('Failed to load analytics:', err);
-            showState('Could not reach the server. Is the Flask backend running on http://127.0.0.1:5000?');
+            showState('Could not reach the server. Check that the backend URL in api.js is correct.');
         }
     }
 

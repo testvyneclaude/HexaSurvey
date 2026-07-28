@@ -58,7 +58,7 @@
     <div class="field-group">
       <label for="email">EMail</label>
       <div class="input-underline">
-        <input type="email" id="email" placeholder="yourname@examle.com" autocomplete="email" required>
+        <input type="email" id="email" placeholder="yourname@example.com" autocomplete="email" required>
         <div class="line"></div>
       </div>
       <div class="error-msg" id="emailError">Enter a valid email address.</div>
@@ -67,7 +67,7 @@
     <div class="field-group">
       <label for="password">Password</label>
       <div class="input-underline">
-        <input type="password" id="password" placeholder="yourpassword" autocomplete="current-password" required>
+        <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password" required>
         <div class="line"></div>
       </div>
       <div class="error-msg" id="passwordError">Password must be at least 8 characters.</div>
@@ -106,6 +106,7 @@
   </div>
 </div>
 
+<script src="api.js"></script>
 <script>
   const card = document.getElementById('card');
   const formTitle = document.getElementById('formTitle');
@@ -143,7 +144,6 @@
   });
 
   
-  const API_BASE = 'http://127.0.0.1:5000/api';
   const redirectTarget = new URLSearchParams(window.location.search).get('redirect');
 
   const nameInput = document.getElementById('name');
@@ -194,10 +194,9 @@
       if (mode === 'signup'){
         submitBtn.textContent = 'Creating account…';
         const role = form.querySelector('input[name="role"]:checked').value;
-        response = await fetch(`${API_BASE}/auth/register`, {
+        response = await apiFetch('/auth/register', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
+          redirectOnUnauthorized: false,
           body: JSON.stringify({
             fullname: nameInput.value.trim(),
             email: emailInput.value.trim(),
@@ -207,10 +206,9 @@
         });
       } else {
         submitBtn.textContent = 'Signing in…';
-        response = await fetch(`${API_BASE}/auth/login`, {
+        response = await apiFetch('/auth/login', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
+          redirectOnUnauthorized: false,
           body: JSON.stringify({
             email: emailInput.value.trim(),
             password: passwordInput.value
@@ -230,8 +228,13 @@
 
       submitBtn.textContent = mode === 'signin' ? 'Signed in ✓' : 'Account created ✓';
 
-      if (mode === 'signup'){
-        // Registration succeeded......switch to sign in so the new user can log in
+      const token = data.data && data.data.token;
+      if (token){
+        setToken(token);
+      }
+
+      if (mode === 'signup' && !token){
+        // Registration succeeded without a token; prompt the user to sign in.
         setTimeout(() => {
           mode = 'signin';
           render();
@@ -239,7 +242,9 @@
           submitBtn.style.opacity = '1';
         }, 900);
       } else {
-        // Sign in succeeded... at this point it redirects to dashboard or wherever the person using wanted to go.
+        if (!token){
+          throw new Error('The server did not return an authentication token.');
+        }
         setTimeout(() => {
           window.location.href = redirectTarget || 'dashboard.html';
         }, 600);
@@ -247,7 +252,7 @@
 
     } catch (err) {
       console.error('Auth request failed:', err);
-      showFormError('Could not reach the server. Is the Flask backend running on http://127.0.0.1:5000?');
+      showFormError(err.message || 'Could not reach the server. Check that the backend URL in api.js is correct.');
       submitBtn.disabled = false;
       submitBtn.style.opacity = '1';
       submitBtn.textContent = mode === 'signin' ? 'Sign in' : 'Sign up';

@@ -83,8 +83,13 @@
 </div>
 
 <script src="theme.js"></script>
+<script src="theme.js"></script>
+<script src="api.js"></script>
 <script>
-    const API_BASE = 'https://hexa-survey-backend.onrender.com/api';
+    function authHeaders(){
+        const token = getToken();
+        return token ? { 'Authorization': `Bearer ${token}` } : {};
+    }
     const params = new URLSearchParams(window.location.search);
     const shareToken = params.get('token');
 
@@ -148,7 +153,7 @@
         try {
             const response = await fetch(`${API_BASE}/surveys/share/${shareToken}`, {
                 method: 'GET',
-                credentials: 'include'
+                headers: authHeaders()
             });
 
             if (response.status === 401){
@@ -181,7 +186,7 @@
 
         } catch (err){
             console.error('Failed to load survey:', err);
-            showState('Could not reach the server. Is the Flask backend running on http://127.0.0.1:5000?');
+            showState('Could not reach the server. Check that the backend URL in api.js is correct.');
         }
     }
 
@@ -228,8 +233,7 @@
         try {
             const response = await fetch(`${API_BASE}/surveys/share/${shareToken}/submit`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
+                headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
                 body: JSON.stringify({ answers })
             });
 
@@ -261,7 +265,7 @@
         } catch (err){
             console.error('Submit failed:', err);
             statusMsg.style.color = 'var(--white)';
-            statusMsg.textContent = 'Could not reach the server. Is the Flask backend running on http://127.0.0.1:5000?';
+            statusMsg.textContent = 'Could not reach the server. Check that the backend URL in api.js is correct.';
             submitBtn.disabled = false;
             submitBtn.textContent = 'Submit response';
         }

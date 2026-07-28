@@ -323,6 +323,7 @@ async function submitSurvey() {
         if (!surveyId) {
             const createResponse = await apiFetch('/surveys', {
                 method: 'POST',
+                redirectOnUnauthorized: false,
                 body: JSON.stringify({
                     title: surveyTitle,
                     description: surveyDescription,
@@ -332,6 +333,7 @@ async function submitSurvey() {
 
             const createData = await createResponse.json();
             if (!createResponse.ok || !createData.success) {
+                console.error('Survey creation failed:', createResponse.status, createData);
                 setStatus(createData.message || 'Could not create the survey.');
                 return;
             }

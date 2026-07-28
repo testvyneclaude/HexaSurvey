@@ -144,8 +144,6 @@
   });
 
   
-  const redirectTarget = new URLSearchParams(window.location.search).get('redirect');
-
   const nameInput = document.getElementById('name');
   const emailInput = document.getElementById('email');
   const passwordInput = document.getElementById('password');
@@ -246,7 +244,7 @@
           throw new Error('The server did not return an authentication token.');
         }
         setTimeout(() => {
-          window.location.href = redirectTarget || 'dashboard.html';
+          window.location.href = 'dashboard.html';
         }, 600);
       }
 

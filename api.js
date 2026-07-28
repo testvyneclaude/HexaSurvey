@@ -41,6 +41,13 @@ async function apiFetch(path, options = {}) {
   });
 
   if (response.status === 401 && redirectOnUnauthorized) {
+    let responseBody = '';
+    try {
+      responseBody = await response.clone().text();
+    } catch (error) {
+      responseBody = 'Response body could not be read.';
+    }
+    console.error(`Unauthorized API request: ${path} (${response.status})`, responseBody);
     clearToken();
     const redirect = encodeURIComponent(window.location.pathname + window.location.search);
     window.location.href = `auth.html?redirect=${redirect}`;

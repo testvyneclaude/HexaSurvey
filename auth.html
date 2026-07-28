@@ -228,7 +228,7 @@
 
       submitBtn.textContent = mode === 'signin' ? 'Signed in ✓' : 'Account created ✓';
 
-      const token = data.data && data.data.token;
+      const token = data.data && (data.data.access_token || data.data.token);
       if (token){
         setToken(token);
       }

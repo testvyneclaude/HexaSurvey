@@ -1,5 +1,5 @@
 // Shared API helper — JWT auth instead of cookies (needed for the Vercel/Render split origin).
-// Assumes login/signup responses look like: { success: true, data: { token: "...", user: {...} } }
+// Assumes login/signup responses look like: { success: true, data: { access_token: "...", ...user } }
 // Update API_BASE below to your real Render URL.
 
 const API_BASE = 'https://hexa-survey-backend.onrender.com/api';

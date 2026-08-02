@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="auth.css">
 </head>
 <body>
@@ -15,6 +16,10 @@
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
   Back to home
 </a>
+
+<button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme">
+  <i class="fa-solid fa-sun" id="themeIcon"></i>
+</button>
 
 <div class="field" aria-hidden="true">
   <div class="blob blob-a"></div>
@@ -106,6 +111,7 @@
   </div>
 </div>
 
+<script src="theme.js"></script>
 <script src="api.js"></script>
 <script>
   const card = document.getElementById('card');
@@ -229,6 +235,7 @@
       const token = data.data && (data.data.access_token || data.data.token);
       if (token){
         setToken(token);
+        setEmail(emailInput.value.trim());
       }
 
       if (mode === 'signup' && !token){

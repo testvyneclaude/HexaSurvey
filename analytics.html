@@ -143,17 +143,32 @@
     .state-msg{ color: var(--muted); text-align: center; padding: 60px 0; }
     .back-nav{ display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.9rem; margin-top: 20px; }
     .back-nav:hover{ color: var(--white); }
+    .nav-inner{
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+    }
+    .nav-email{
+        justify-self: center;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        color: var(--muted);
+    }
+    .nav-actions{
+        justify-self: end;
+    }
 </style>
 </head>
 
 <header class="nav">
   <div class="nav-inner">
     <div class="logo">Hexa<span class="x">Survey</span></div>
+    <div class="nav-email" id="navEmail"></div>
     <div class="nav-actions">
       <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme">
         <i class="fa-solid fa-sun" id="themeIcon"></i>
       </button>
-      <a href="dashboard.html" class="sign-in nav-cta">Dashboard</a>
+      <a href="#" id="signOutBtn" class="sign-in nav-cta">Sign out</a>
     </div>
   </div>
 </header>
@@ -203,6 +218,21 @@
     if (!isLoggedIn()){
         window.location.href = 'auth.html';
     }
+
+    document.getElementById('navEmail').textContent = getEmail();
+
+    document.getElementById('signOutBtn').addEventListener('click', async (e) => {
+        e.preventDefault();
+        try {
+            await apiFetch('/auth/logout', { method: 'POST' });
+        } catch (err){
+            console.error('Logout request failed:', err);
+        } finally {
+            clearToken();
+            clearEmail();
+            window.location.href = 'auth.html';
+        }
+    });
     const params = new URLSearchParams(window.location.search);
     const surveyId = params.get('id');
 

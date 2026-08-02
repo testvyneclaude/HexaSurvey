@@ -4,6 +4,7 @@
 
 const API_BASE = 'https://hexa-survey-backend.onrender.com/api';
 const TOKEN_KEY = 'hexasurvey_token';
+const EMAIL_KEY = 'hexasurvey_email';
 
 function getToken() {
   return localStorage.getItem(TOKEN_KEY);
@@ -15,6 +16,18 @@ function setToken(token) {
 
 function clearToken() {
   localStorage.removeItem(TOKEN_KEY);
+}
+
+function getEmail() {
+  return localStorage.getItem(EMAIL_KEY) || '';
+}
+
+function setEmail(email) {
+  localStorage.setItem(EMAIL_KEY, email);
+}
+
+function clearEmail() {
+  localStorage.removeItem(EMAIL_KEY);
 }
 
 function isLoggedIn() {
@@ -59,5 +72,6 @@ async function apiFetch(path, options = {}) {
 
 function logout() {
   clearToken();
+  clearEmail();
   window.location.href = 'auth.html';
 }

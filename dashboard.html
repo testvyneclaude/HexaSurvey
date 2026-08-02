@@ -119,7 +119,7 @@
             <h1 class="headline" style="text-align: center;">Dashboard</h1><br>
              <p style="text-align: center;">Here you can manage your surveys and view analytics.</p>
             <section class="inner-card" id="latestShare" hidden></section>
-            <section class="inner-card">
+            <section class="inner-card" id="creatorSurveysCard">
                 <h2>My Surveys</h2><br>
                 <div id="surveyList">
                     <p>Loading your surveys…</p>
@@ -128,6 +128,17 @@
                 <button class="btn btn-primary"><a href="create-survey.html">+ Create a Survey</a></button>
                <!-- <button class="btn btn-secondary"><a href="view-surveys.html">View Surveys</a></button> -->
             </div>
+            </section>
+
+            <section class="inner-card" id="respondentJoinCard" hidden>
+                <h2>Join a Survey</h2><br>
+                <p>Paste the survey link or code someone shared with you.</p>
+                <div style="display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;">
+                    <input type="text" id="joinSurveyInput" placeholder="e.g. share.html?token=ABCD1234 or just ABCD1234"
+                        style="flex:1; min-width:220px; background:transparent; border:1px solid var(--border); color:var(--white); padding:14px; font-family:var(--font-body); font-size:0.95rem;">
+                    <button type="button" class="btn btn-primary" onclick="goToSurvey()">Go</button>
+                </div>
+                <p id="joinSurveyError" style="color:#f87171; margin-top:10px;"></p>
             </section>
         </div>
     </section>
@@ -218,6 +229,39 @@
         }
         window.deleteSurvey = deleteSurvey;
 
+        function goToSurvey(){
+            const input = document.getElementById('joinSurveyInput');
+            const errorEl = document.getElementById('joinSurveyError');
+            const raw = input.value.trim();
+            errorEl.textContent = '';
+
+            if (!raw){
+                errorEl.textContent = 'Paste a survey link or code first.';
+                return;
+            }
+
+            let token = raw;
+
+            // Accept a full URL (e.g. https://.../share.html?token=ABCD1234)
+            // or just "share.html?token=ABCD1234", or a bare token.
+            const tokenMatch = raw.match(/[?&]token=([^&\s]+)/);
+            if (tokenMatch){
+                token = decodeURIComponent(tokenMatch[1]);
+            }
+
+            if (!token){
+                errorEl.textContent = 'Could not find a survey code in that link.';
+                return;
+            }
+
+            window.location.href = `share.html?token=${encodeURIComponent(token)}`;
+        }
+        window.goToSurvey = goToSurvey;
+
+        document.getElementById('joinSurveyInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') goToSurvey();
+        });
+
         function renderLatestShare(){
             let latestShare;
             try {
@@ -288,7 +332,8 @@
                 const response = await apiFetch('/surveys/', { method: 'GET' });
 
                 if (response.status === 403){
-                    surveyListEl.innerHTML = '<p>This dashboard is for survey creators. Your account doesn\'t have creator access.</p>';
+                    document.getElementById('creatorSurveysCard').hidden = true;
+                    document.getElementById('respondentJoinCard').hidden = false;
                     return;
                 }
 

@@ -147,6 +147,48 @@
         }
         window.copyShareLink = copyShareLink;
 
+        async function deleteSurvey(surveyId, linkEl){
+            const confirmed = window.confirm('Delete this survey? This also removes all its questions and responses. This cannot be undone.');
+            if (!confirmed) return;
+
+            const card = linkEl.closest('.inner-card');
+            const originalText = linkEl.textContent;
+            linkEl.textContent = 'Deleting…';
+
+            try {
+                const response = await apiFetch(`/surveys/${surveyId}`, { method: 'DELETE' });
+
+                if (response.status === 403){
+                    alert('You can only delete surveys you own.');
+                    linkEl.textContent = originalText;
+                    return;
+                }
+                if (response.status === 404){
+                    alert('This survey no longer exists.');
+                    if (card) card.remove();
+                    return;
+                }
+
+                let data = {};
+                try { data = await response.json(); } catch (e) { /* some DELETE endpoints return no body */ }
+
+                if (!response.ok || (data && data.success === false)){
+                    alert((data && data.message) || 'Could not delete this survey.');
+                    linkEl.textContent = originalText;
+                    return;
+                }
+
+                if (card) card.remove();
+
+            } catch (err){
+                if (err.message && err.message.includes('Unauthorized')) return;
+                console.error('Failed to delete survey:', err);
+                alert('Could not reach the server.');
+                linkEl.textContent = originalText;
+            }
+        }
+        window.deleteSurvey = deleteSurvey;
+
         function renderLatestShare(){
             let latestShare;
             try {
@@ -205,7 +247,11 @@
                         ${shareBlock}
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
                             <span>${viewAnalyticsLink}</span>
-                            <a href="create-survey.html?id=${s.id}" style="font-weight:700;">Edit survey</a>
+                            <span>
+                                <a href="create-survey.html?id=${s.id}" style="font-weight:700;">Edit survey</a>
+                                &middot;
+                                <a href="#" onclick="deleteSurvey(${s.id}, this); return false;" style="color:#f87171;">Delete</a>
+                            </span>
                         </div>
                     </div>
                 `;

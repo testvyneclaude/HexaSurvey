@@ -48,6 +48,7 @@ html.light-theme {
 *{ box-sizing:border-box; margin:0; padding:0; }
 body{
   min-height:100vh;
+  min-height: 100dvh;
   background: var(--bg);
   font-family: var(--font-body);
   color: var(--white);
@@ -103,7 +104,7 @@ label{
 .input-underline{ position: relative; }
 .input-underline input{
   width:100%; background: transparent; border: none; color: var(--white);
-  font-size: 0.95rem; font-family: var(--font-body); padding: 4px 0 10px;
+  font-size: 16px; font-family: var(--font-body); padding: 4px 0 10px;
 }
 .input-underline input::placeholder{ color: var(--muted-dim); }
 .input-underline .line{

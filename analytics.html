@@ -157,6 +157,18 @@
     .nav-actions{
         justify-self: end;
     }
+    @media (max-width: 600px){
+        .nav-inner{ padding: 14px 16px; gap: 8px; }
+        .logo{ font-size: 1.05rem; }
+        .nav-email{
+            max-width: 38vw;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 0.72rem;
+        }
+        body{ padding: 16px; }
+    }
 </style>
 </head>
 
@@ -215,14 +227,12 @@
 <script src="theme.js"></script>
 <script src="api.js"></script>
 <script>
-    // no login means no analytics access
     if (!isLoggedIn()){
         window.location.href = 'auth.html';
     }
 
     document.getElementById('navEmail').textContent = getEmail();
 
-    // logout person and clear browser details
     document.getElementById('signOutBtn').addEventListener('click', async (e) => {
         e.preventDefault();
         try {
@@ -242,21 +252,18 @@
     const analyticsContent = document.getElementById('analyticsContent');
     const questionsAnalyticsEl = document.getElementById('questionsAnalytics');
 
-    // make text safe before we put am inside page
     function escapeHtml(str){
         const div = document.createElement('div');
         div.textContent = str == null ? '' : String(str);
         return div.innerHTML;
     }
 
-    // show simple message when page no fit load
     function showState(msg){
         loadingState.textContent = msg;
         loadingState.style.display = 'block';
         analyticsContent.style.display = 'none';
     }
 
-    // turn multiple choice answers to result bars
     function renderMcqQuestion(q, totalResponses){
         const counts = q.answer_counts || {};
         const options = q.options || Object.keys(counts);
@@ -282,7 +289,6 @@
         return bars || '<p style="color: var(--muted);">No responses yet.</p>';
     }
 
-    // show all written answers for text question
     function renderTextQuestion(q){
         const answers = q.text_answers || [];
         if (answers.length === 0){
@@ -291,7 +297,6 @@
         return `<div class="text-answers">${answers.map(a => `<div class="text-answer">${escapeHtml(a)}</div>`).join('')}</div>`;
     }
 
-    // build one complete analytics question card
     function renderQuestion(q, totalResponses){
         const block = document.createElement('div');
         block.className = 'question-block';
@@ -315,7 +320,6 @@
         questionsAnalyticsEl.appendChild(block);
     }
 
-    // collect survey stats then put everything for page
     async function loadAnalytics(){
         if (!surveyId){
             showState('No survey selected.');
@@ -362,7 +366,6 @@
                 : 'Not published yet';
             document.getElementById('shareUrl').textContent = shareUrl;
 
-            // allow copy only when survey don get share link
             const copyBtn = document.getElementById('copyShareBtn');
             if (!survey.share_token){
                 copyBtn.disabled = true;

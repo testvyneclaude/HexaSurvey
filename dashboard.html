@@ -97,6 +97,19 @@
         .dashboard-actions{
             margin-top: 20px;
         }
+        @media (max-width: 600px){
+            .nav-inner{ padding: 14px 16px; gap: 8px; }
+            .logo{ font-size: 1.05rem; }
+            .nav-email{
+                max-width: 38vw;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                font-size: 0.72rem;
+            }
+            .nav-actions{ gap: 10px; }
+            body{ padding: 16px; }
+        }
     </style>
 </head>
 
@@ -135,7 +148,7 @@
                 <p>Paste the survey link or code someone shared with you.</p>
                 <div style="display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;">
                     <input type="text" id="joinSurveyInput" placeholder="e.g. share.html?token=ABCD1234 or just ABCD1234"
-                        style="flex:1; min-width:220px; background:transparent; border:1px solid var(--border); color:var(--white); padding:14px; font-family:var(--font-body); font-size:0.95rem;">
+                        style="flex:1; min-width:220px; background:transparent; border:1px solid var(--border); color:var(--white); padding:14px; font-family:var(--font-body); font-size:16px;">
                     <button type="button" class="btn btn-primary" onclick="goToSurvey()">Go</button>
                 </div>
                 <p id="joinSurveyError" style="color:#f87171; margin-top:10px;"></p>
@@ -146,32 +159,27 @@
     <script src="theme.js"></script>
     <script src="api.js"></script>
     <script>
-        // pick the dashboard places we need fill up
         const surveyListEl = document.getElementById('surveyList');
         const latestShareEl = document.getElementById('latestShare');
         const signOutBtn = document.getElementById('signOutBtn');
 
-        // send person back if dem never signin
         if (!isLoggedIn()){
             window.location.href = 'auth.html';
         }
 
         document.getElementById('navEmail').textContent = getEmail();
 
-        // make text safe before showing am for page
         function escapeHtml(str){
             const div = document.createElement('div');
             div.textContent = str == null ? '' : String(str);
             return div.innerHTML;
         }
 
-        // copy survey link and show small feedback
         function copyShareLink(token, btnOrId){
             const btn = typeof btnOrId === 'string' ? document.getElementById(btnOrId) : btnOrId;
             const url = `${window.location.origin}${window.location.pathname.replace('dashboard.html','')}share.html?token=${token}`;
             const icon = btn.querySelector('i');
 
-            // change button small make person know wetin happen
             function flash(success){
                 if (icon){
                     const originalClass = icon.className;
@@ -192,7 +200,6 @@
         }
         window.copyShareLink = copyShareLink;
 
-        // ask first then comot survey from backend and page
         async function deleteSurvey(surveyId, linkEl){
             const confirmed = window.confirm('Delete this survey? This also removes all its questions and responses. This cannot be undone.');
             if (!confirmed) return;
@@ -216,8 +223,7 @@
                 }
 
                 let data = {};
-                // some delete response no get body at all
-                try { data = await response.json(); } catch (e) { }
+                try { data = await response.json(); } catch (e) { /* some DELETE endpoints return no body */ }
 
                 if (!response.ok || (data && data.success === false)){
                     alert((data && data.message) || 'Could not delete this survey.');
@@ -236,7 +242,6 @@
         }
         window.deleteSurvey = deleteSurvey;
 
-        // collect pasted code or link then open the survey
         function goToSurvey(){
             const input = document.getElementById('joinSurveyInput');
             const errorEl = document.getElementById('joinSurveyError');
@@ -250,7 +255,8 @@
 
             let token = raw;
 
-            // full link or only code both dey work here
+            // Accept a full URL (e.g. https://.../share.html?token=ABCD1234)
+            // or just "share.html?token=ABCD1234", or a bare token.
             const tokenMatch = raw.match(/[?&]token=([^&\s]+)/);
             if (tokenMatch){
                 token = decodeURIComponent(tokenMatch[1]);
@@ -269,7 +275,6 @@
             if (e.key === 'Enter') goToSurvey();
         });
 
-        // show the fresh survey link we save after create
         function renderLatestShare(){
             let latestShare;
             try {
@@ -297,7 +302,6 @@
             });
         }
 
-        // draw all the surveys for dashboard
         function renderSurveys(surveys){
             if (!surveys || surveys.length === 0){
                 surveyListEl.innerHTML = '<p>You haven\'t created any surveys yet.</p>';
@@ -336,7 +340,6 @@
             }).join('');
         }
 
-        // fetch surveys for the signed in person
         async function loadSurveys(){
             try {
                 const response = await apiFetch('/surveys/', { method: 'GET' });
@@ -363,7 +366,6 @@
             }
         }
 
-        // clear login details when person logout
         signOutBtn.addEventListener('click', async (e) => {
             e.preventDefault();
             try {
@@ -376,7 +378,6 @@
             }
         });
 
-        // start the dashboard content
         renderLatestShare();
         loadSurveys();
     </script>

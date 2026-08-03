@@ -12,6 +12,10 @@
 <style>
     *{ box-sizing: border-box; }
     body{ margin-top: 80px; padding: 30px; }
+    @media (max-width: 600px){
+        body{ padding: 16px; }
+        .question-card{ padding: 16px; }
+    }
     .survey-wrap{ max-width: 720px; margin: 40px auto; }
     .inner-card{
         background-color: var(--bg-elevated);
@@ -42,7 +46,7 @@
         padding: 14px;
         color: var(--white);
         font-family: var(--font-body);
-        font-size: 15px;
+        font-size: 16px;
     }
     .question-card textarea{ min-height: 100px; resize: vertical; }
     .option-row{ display: flex; align-items: center; gap: 10px; margin-top: 10px; }
@@ -84,12 +88,10 @@
 <script src="theme.js"></script>
 <script src="api.js"></script>
 <script>
-    // add login token when browser get one
     function authHeaders(){
         const token = getToken();
         return token ? { 'Authorization': `Bearer ${token}` } : {};
     }
-    // pick survey code from the link
     const params = new URLSearchParams(window.location.search);
     const shareToken = params.get('token');
 
@@ -102,21 +104,18 @@
     const submitBtn = document.getElementById('submitBtn');
     const form = document.getElementById('responseForm');
 
-    // stop survey text from to dey turn html
     function escapeHtml(str){
         const div = document.createElement('div');
         div.textContent = str == null ? '' : String(str);
         return div.innerHTML;
     }
 
-    // show loading or error message for page
     function showState(msg){
         loadingState.textContent = msg;
         loadingState.style.display = 'block';
         surveyContent.style.display = 'none';
     }
 
-    // build the correct answer field for each question
     function renderQuestion(q){
         const wrapper = document.createElement('div');
         wrapper.className = 'question-card';
@@ -147,7 +146,6 @@
         questionsContainer.appendChild(wrapper);
     }
 
-    // fetch survey details using the code from link
     async function loadSurvey(){
         if (!shareToken){
             showState('No survey link provided.');
@@ -194,7 +192,6 @@
         }
     }
 
-    // gather answers sendto backend
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         statusMsg.textContent = '';
@@ -203,7 +200,6 @@
         const answers = [];
         let missingRequired = false;
 
-        // check question and make answer payload
         questionCards.forEach(card => {
             const qId = card.dataset.questionId;
             const type = card.dataset.type;
@@ -240,7 +236,7 @@
             const response = await fetch(`${API_BASE}/surveys/share/${shareToken}/responses`, {
                 method: 'POST',
                 headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
-                body: JSON.stringify({ answers })
+                body: JSON.stringify({ responses })
             });
 
             if (response.status === 401){

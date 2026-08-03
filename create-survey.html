@@ -37,6 +37,8 @@
             border-bottom: 0.5px solid var(--muted);
             width: 100%;
             color: var(--white);
+            font-family: var(--font-body);
+            font-size: 16px;
         }
         .create button{
             border: 1px solid var(--white);
@@ -85,6 +87,26 @@
         .nav-actions{
             justify-self: end;
         }
+        .question-type-buttons{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        @media (max-width: 600px){
+            .nav-inner{ padding: 14px 16px; display:flex;align-items: center;justify-content: space-between; }
+            .logo{ font-size: 1.05rem; }
+            .nav-email{
+                display:none;
+                max-width: 38vw;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                font-size: 0.72rem;
+            }
+            body{ padding: 16px; }
+            .create{ padding: 18px; }
+        }
     </style>
 </head>
 <body>
@@ -98,6 +120,7 @@
         <i class="fa-solid fa-sun" id="themeIcon"></i>
       </button>
       <a href="#" id="signOutBtn" class="sign-in nav-cta">Sign out</a>
+      <i class="fa fa-sign-out" aria-hidden="true" id="signOutBtn" style="display:none"></i>
     </div>
   </div>
 </header>
@@ -114,9 +137,11 @@
 
         <h3>Questions</h3><br>
         <div id="questionsContainer"></div>
-        <button onclick="addQuestion('text')">+ Add Text Question</button>
-        <button onclick="addQuestion('paragraph')">+ Add Paragraph Question</button>
-        <button onclick="addQuestion('mcq')">+ Add Multiple Choice Question</button>
+        <div class="question-type-buttons">
+            <button onclick="addQuestion('text')">+ Add Text Question</button>
+            <button onclick="addQuestion('paragraph')">+ Add Paragraph Question</button>
+            <button onclick="addQuestion('mcq')">+ Add Multiple Choice Question</button>
+        </div>
         
         <button onclick="submitSurvey()" class="sub-btn btn-primary" style="margin-top: 30px; padding: 12px 25px; font-size: 18px; width: 100%;">
     Submit &amp; Create Survey
@@ -328,7 +353,7 @@ async function submitSurvey() {
     const questionsData = collectQuestionsPayload();
 
     try {
-      
+        // The current API creates the complete survey in one request.
         if (!surveyId) {
             const createResponse = await apiFetch('/surveys', {
                 method: 'POST',

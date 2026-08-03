@@ -328,7 +328,7 @@ async function submitSurvey() {
     const questionsData = collectQuestionsPayload();
 
     try {
-        // The current API creates the complete survey in one request.
+      
         if (!surveyId) {
             const createResponse = await apiFetch('/surveys', {
                 method: 'POST',

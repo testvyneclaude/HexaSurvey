@@ -88,10 +88,12 @@
 <script src="theme.js"></script>
 <script src="api.js"></script>
 <script>
+    // add login token when browser get one
     function authHeaders(){
         const token = getToken();
         return token ? { 'Authorization': `Bearer ${token}` } : {};
     }
+    // pick survey code from the link
     const params = new URLSearchParams(window.location.search);
     const shareToken = params.get('token');
 
@@ -104,18 +106,21 @@
     const submitBtn = document.getElementById('submitBtn');
     const form = document.getElementById('responseForm');
 
+    // stop survey text from turning to html
     function escapeHtml(str){
         const div = document.createElement('div');
         div.textContent = str == null ? '' : String(str);
         return div.innerHTML;
     }
 
+    // show loading or error message for page
     function showState(msg){
         loadingState.textContent = msg;
         loadingState.style.display = 'block';
         surveyContent.style.display = 'none';
     }
 
+    // build the correct answer field for each question
     function renderQuestion(q){
         const wrapper = document.createElement('div');
         wrapper.className = 'question-card';
@@ -146,6 +151,7 @@
         questionsContainer.appendChild(wrapper);
     }
 
+    // fetch survey details using the code from link
     async function loadSurvey(){
         if (!shareToken){
             showState('No survey link provided.');
@@ -192,6 +198,7 @@
         }
     }
 
+    // gather answers and send them to backend
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         statusMsg.textContent = '';
@@ -200,6 +207,7 @@
         const answers = [];
         let missingRequired = false;
 
+        // check every question and make answer payload
         questionCards.forEach(card => {
             const qId = card.dataset.questionId;
             const type = card.dataset.type;

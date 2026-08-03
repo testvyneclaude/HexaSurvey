@@ -114,6 +114,7 @@
 <script src="theme.js"></script>
 <script src="api.js"></script>
 <script>
+  // pick all the auth page things we go dey use
   const card = document.getElementById('card');
   const formTitle = document.getElementById('formTitle');
   const submitBtn = document.getElementById('submitBtn');
@@ -123,6 +124,7 @@
 
   let mode = 'signin'; 
 
+  // change the page look based on signin or signup
   function render(){
     if (mode === 'signin'){
       card.classList.remove('mode-signup');
@@ -142,6 +144,7 @@
     }
   }
 
+  // swap between signin and signup form
   switchBtn.addEventListener('click', () => {
     mode = mode === 'signin' ? 'signup' : 'signin';
     card.style.transform = 'scale(.985)';
@@ -158,15 +161,18 @@
   const passwordError = document.getElementById('passwordError');
   const formError = document.getElementById('formError');
 
+  // show any wahala for the form
   function showFormError(msg){
     formError.textContent = msg;
     formError.classList.add('show');
   }
+  // clear old wahala message before next try
   function clearFormError(){
     formError.textContent = '';
     formError.classList.remove('show');
   }
 
+  // check details then send signin or signup request
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     clearFormError();
@@ -195,6 +201,7 @@
     try {
       let response, data;
 
+      // signup need name role and password too
       if (mode === 'signup'){
         submitBtn.textContent = 'Creating account…';
         const role = form.querySelector('input[name="role"]:checked').value;
@@ -232,6 +239,7 @@
 
       submitBtn.textContent = mode === 'signin' ? 'Signed in ✓' : 'Account created ✓';
 
+      // save token so person fit enter protected pages
       const token = data.data && (data.data.access_token || data.data.token);
       if (token){
         setToken(token);
@@ -239,7 +247,7 @@
       }
 
       if (mode === 'signup' && !token){
-        // Registration succeeded without a token; prompt the user to sign in.
+        // account don create but person need signin first
         setTimeout(() => {
           mode = 'signin';
           render();
@@ -264,6 +272,7 @@
     }
   });
 
+  // clear errors as person dey correct the details
   [emailInput, passwordInput].forEach(inp => {
     inp.addEventListener('input', () => {
       emailError.classList.remove('show');

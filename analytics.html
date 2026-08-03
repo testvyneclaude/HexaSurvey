@@ -227,14 +227,14 @@
 <script src="theme.js"></script>
 <script src="api.js"></script>
 <script>
-    // Ensure the user is logged in before accessing analytics
+    // no login means no analytics access
     if (!isLoggedIn()){
         window.location.href = 'auth.html';
     }
 
     document.getElementById('navEmail').textContent = getEmail();
 
-    // Sign out event listener
+    // logout person and clear browser details
     document.getElementById('signOutBtn').addEventListener('click', async (e) => {
         e.preventDefault();
         try {
@@ -255,22 +255,25 @@
     const analyticsContent = document.getElementById('analyticsContent');
     const questionsAnalyticsEl = document.getElementById('questionsAnalytics');
 
+    // make text safe before we put am inside page
     function escapeHtml(str){
         const div = document.createElement('div');
         div.textContent = str == null ? '' : String(str);
         return div.innerHTML;
     }
 
+    // show simple message when page no fit load
     function showState(msg){
         loadingState.textContent = msg;
         loadingState.style.display = 'block';
         analyticsContent.style.display = 'none';
     }
 
+    // turn multiple choice answers to result bars
     function renderMcqQuestion(q, totalResponses){
         let counts = q.answer_counts || {};
         
-        // Convert backend array format ({option, count, percentage}) into key-value map if needed[cite: 4]
+        // arrange backend result if e come as list
         if (Array.isArray(q.results)) {
             counts = {};
             q.results.forEach(r => { 
@@ -303,11 +306,12 @@
         return bars || '<p style="color: var(--muted);">No responses yet.</p>';
     }
 
+    // show all written answers for text question
     function renderTextQuestion(q){
-        // Support all potential key names returned by Flask[cite: 4, 5]
+        // check all the answer names backend fit send
         const rawAnswers = q.text_answers || q.answers || q.results || q.responses || [];
         
-        // Extract string values if backend returns an array of objects[cite: 4]
+        // pick only the actual answer from object list
         const answers = rawAnswers.map(a => {
             if (typeof a === 'object' && a !== null) {
                 return a.answer || a.option || JSON.stringify(a);
@@ -321,6 +325,7 @@
         return `<div class="text-answers">${answers.map(a => `<div class="text-answer">${escapeHtml(a)}</div>`).join('')}</div>`;
     }
 
+    // build one complete analytics question card
     function renderQuestion(q, totalResponses){
         const block = document.createElement('div');
         block.className = 'question-block';
@@ -344,6 +349,7 @@
         questionsAnalyticsEl.appendChild(block);
     }
 
+    // collect survey stats then put everything for page
     async function loadAnalytics(){
         if (!surveyId){
             showState('No survey selected.');
@@ -369,17 +375,16 @@
                 return;
             }
 
-           // AFTER:
-// Support responses both wrapped in data.data and flat root objects
+            // backend fit wrap survey data or send am direct
 const survey = data.data || data;
 
-// Check for common title key variations (title, survey_title, name)
+// use any title name backend carry come
 const surveyTitle = survey.title || survey.survey_title || survey.name || data.title;
 const surveyDesc = survey.description || survey.survey_description || data.description || '';
 
 document.getElementById('surveyTitle').textContent = surveyTitle || 'Untitled survey';
 document.getElementById('surveyDescription').textContent = surveyDesc;
-            // Fallback chain for response count key[cite: 4, 5]
+            // check the response count name wey dey available
             const totalResponses = survey['total responses'] ?? survey.total_responses ?? survey.response_count ?? 0;
             const questions = survey.questions || [];
 
@@ -396,6 +401,7 @@ document.getElementById('surveyDescription').textContent = surveyDesc;
                 : 'Not published yet';
             document.getElementById('shareUrl').textContent = shareUrl;
 
+            // allow copy only when survey don get share link
             const copyBtn = document.getElementById('copyShareBtn');
             if (!survey.share_token){
                 copyBtn.disabled = true;

@@ -80,6 +80,19 @@
             border-color: var(--white);
             background: var(--bg-card);
         }
+        .whatsapp-share-btn{
+            color: #25d366;
+            border-color: rgba(37, 211, 102, 0.55);
+        }
+        .whatsapp-share-btn:hover{
+            color: #25d366;
+            border-color: #25d366;
+            background: rgba(37, 211, 102, 0.12);
+        }
+        .survey-share-actions{
+            display: inline-flex;
+            gap: 8px;
+        }
         .nav-inner{
             display: grid;
             grid-template-columns: 1fr auto 1fr;
@@ -159,27 +172,32 @@
     <script src="theme.js"></script>
     <script src="api.js"></script>
     <script>
+        // pick the dashboard places we need fill up
         const surveyListEl = document.getElementById('surveyList');
         const latestShareEl = document.getElementById('latestShare');
         const signOutBtn = document.getElementById('signOutBtn');
 
+        // send person back if dem never signin
         if (!isLoggedIn()){
             window.location.href = 'auth.html';
         }
 
         document.getElementById('navEmail').textContent = getEmail();
 
+        // make text safe before showing am for page
         function escapeHtml(str){
             const div = document.createElement('div');
             div.textContent = str == null ? '' : String(str);
             return div.innerHTML;
         }
 
+        // copy survey link and show small feedback
         function copyShareLink(token, btnOrId){
             const btn = typeof btnOrId === 'string' ? document.getElementById(btnOrId) : btnOrId;
             const url = `${window.location.origin}${window.location.pathname.replace('dashboard.html','')}share.html?token=${token}`;
             const icon = btn.querySelector('i');
 
+            // change button small make person know wetin happen
             function flash(success){
                 if (icon){
                     const originalClass = icon.className;
@@ -200,6 +218,15 @@
         }
         window.copyShareLink = copyShareLink;
 
+        // open whatsapp with survey message and link ready
+        function shareSurveyOnWhatsApp(token, title){
+            const shareUrl = `${window.location.origin}${window.location.pathname.replace('dashboard.html', '')}share.html?token=${encodeURIComponent(token)}`;
+            const message = `abeg help me fill this survey\n\n${title}\n${shareUrl}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
+        }
+        window.shareSurveyOnWhatsApp = shareSurveyOnWhatsApp;
+
+        // ask first then comot survey from backend and page
         async function deleteSurvey(surveyId, linkEl){
             const confirmed = window.confirm('Delete this survey? This also removes all its questions and responses. This cannot be undone.');
             if (!confirmed) return;
@@ -223,7 +250,8 @@
                 }
 
                 let data = {};
-                try { data = await response.json(); } catch (e) { /* some DELETE endpoints return no body */ }
+                // some delete response no get body at all
+                try { data = await response.json(); } catch (e) { }
 
                 if (!response.ok || (data && data.success === false)){
                     alert((data && data.message) || 'Could not delete this survey.');
@@ -242,6 +270,7 @@
         }
         window.deleteSurvey = deleteSurvey;
 
+        // collect pasted code or link then open the survey
         function goToSurvey(){
             const input = document.getElementById('joinSurveyInput');
             const errorEl = document.getElementById('joinSurveyError');
@@ -255,8 +284,7 @@
 
             let token = raw;
 
-            // Accept a full URL (e.g. https://.../share.html?token=ABCD1234)
-            // or just "share.html?token=ABCD1234", or a bare token.
+            // full link or only code both dey work here
             const tokenMatch = raw.match(/[?&]token=([^&\s]+)/);
             if (tokenMatch){
                 token = decodeURIComponent(tokenMatch[1]);
@@ -275,6 +303,7 @@
             if (e.key === 'Enter') goToSurvey();
         });
 
+        // show the fresh survey link we save after create
         function renderLatestShare(){
             let latestShare;
             try {
@@ -302,6 +331,7 @@
             });
         }
 
+        // draw all the surveys for dashboard
         function renderSurveys(surveys){
             if (!surveys || surveys.length === 0){
                 surveyListEl.innerHTML = '<p>You haven\'t created any surveys yet.</p>';
@@ -313,8 +343,11 @@
                 const shareUrl = isShareable
                     ? `${window.location.origin}${window.location.pathname.replace('dashboard.html','')}share.html?token=${escapeHtml(s.share_token)}`
                     : '';
-                const copyIcon = isShareable
-                    ? `<button type="button" class="copy-icon-btn" id="copyIcon-${s.id}" title="Copy share link" onclick="copyShareLink('${escapeHtml(s.share_token)}', 'copyIcon-${s.id}')"><i class="fa-solid fa-copy"></i></button>`
+                const shareIcons = isShareable
+                    ? `<span class="survey-share-actions">
+                        <button type="button" class="copy-icon-btn" id="copyIcon-${s.id}" title="Copy share link" onclick="copyShareLink('${escapeHtml(s.share_token)}', 'copyIcon-${s.id}')"><i class="fa-solid fa-copy"></i></button>
+                        <button type="button" class="copy-icon-btn whatsapp-share-btn" title="Share on WhatsApp" data-token="${escapeHtml(s.share_token)}" data-title="${escapeHtml(s.title || 'Survey')}" onclick="shareSurveyOnWhatsApp(this.dataset.token, this.dataset.title)"><i class="fa-brands fa-whatsapp"></i></button>
+                    </span>`
                     : '';
                 const viewAnalyticsLink = isShareable
                     ? `<a href="analytics.html?id=${s.id}">View analytics</a>`
@@ -324,7 +357,7 @@
                     <div class="inner-card" style="margin-top:16px;">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <h3>${escapeHtml(s.title)}</h3>
-                            ${copyIcon}
+                            ${shareIcons}
                         </div>
                         <p>${escapeHtml(s.description || '')}</p>
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
@@ -340,6 +373,7 @@
             }).join('');
         }
 
+        // fetch surveys for the signed in person
         async function loadSurveys(){
             try {
                 const response = await apiFetch('/surveys/', { method: 'GET' });
@@ -366,6 +400,7 @@
             }
         }
 
+        // clear login details when person logout
         signOutBtn.addEventListener('click', async (e) => {
             e.preventDefault();
             try {
@@ -378,6 +413,7 @@
             }
         });
 
+        // start the dashboard content
         renderLatestShare();
         loadSurveys();
     </script>

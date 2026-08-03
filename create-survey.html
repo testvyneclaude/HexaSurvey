@@ -153,12 +153,14 @@
     <script src="api.js"></script>
     <script>
        
+// only signed in person fit create survey
 if (!isLoggedIn()){
     window.location.href = 'auth.html';
 }
 
 document.getElementById('navEmail').textContent = getEmail();
 
+// clear details and go signin when person logout
 document.getElementById('signOutBtn').addEventListener('click', async (e) => {
     e.preventDefault();
     try {
@@ -172,6 +174,7 @@ document.getElementById('signOutBtn').addEventListener('click', async (e) => {
     }
 });
 
+// check if person wan edit old survey
 const urlParams = new URLSearchParams(window.location.search);
 let surveyId = urlParams.get('id') ? parseInt(urlParams.get('id'), 10) : null;
 
@@ -180,17 +183,20 @@ const formStatus = document.getElementById('formStatus');
 const titleInput = document.getElementById('surveyTitle');
 const descriptionInput = document.getElementById('surveyDescription');
 
+// make any typed text safe for html
 function escapeHtml(str){
     const div = document.createElement('div');
     div.textContent = str == null ? '' : String(str);
     return div.innerHTML;
 }
 
+// show status message below the form
 function setStatus(msg, isError = true){
     formStatus.textContent = msg;
     formStatus.style.color = 'var(--white)';
 }
 
+// add new question box or load old question box
 function addQuestion(type, existing) {
     questionCounter++;
     const qId = "question_" + questionCounter;
@@ -205,6 +211,7 @@ function addQuestion(type, existing) {
 
     let inputHtml = "";
 
+    // each question type get its own input setup
     if (type === 'text') {
         inputHtml = `
             <input type="text" placeholder="Enter your short answer question here" value="${escapeHtml(questionText)}"><br><br>
@@ -253,6 +260,7 @@ function addQuestion(type, existing) {
     document.getElementById("questionsContainer").appendChild(div);
 }
 
+// add another choice inside multiple choice question
 function addOption(questionId, existingValue) {
     const container = document.getElementById(`options-container-${questionId}`);
     const currentOptionsCount = container.children.length + 1;
@@ -268,6 +276,7 @@ function addOption(questionId, existingValue) {
     container.appendChild(optionDiv);
 }
 
+// comot question box person no need again
 function removeQuestion(elementId) {
     const element = document.getElementById(elementId);
     if (element) {
@@ -275,12 +284,14 @@ function removeQuestion(elementId) {
     }
 }
 
+// arrange all question boxes for backend format
 function collectQuestionsPayload(){
     const questionsData = [];
     const questionElements = document.querySelectorAll('.question-box');
 
     questionElements.forEach((box) => {
-        const type = box.dataset.type; // 'text' | 'paragraph' | 'mcq'
+        // get the kind question this box be
+        const type = box.dataset.type;
         const questionTypeMap = { text: 'short_answer', paragraph: 'paragraph', mcq: 'multiple_choice' };
         const questionTextInput = box.querySelector('input[type="text"]');
         const questionText = questionTextInput ? questionTextInput.value.trim() : "";
@@ -309,6 +320,7 @@ function collectQuestionsPayload(){
     return questionsData;
 }
 
+// load old survey details when person wan edit am
 async function loadExistingSurvey(id){
     setStatus('Loading survey…', false);
     try {
@@ -339,6 +351,7 @@ async function loadExistingSurvey(id){
     }
 }
 
+// validate survey then create am for backend
 async function submitSurvey() {
     setStatus('', false);
 
@@ -353,7 +366,7 @@ async function submitSurvey() {
     const questionsData = collectQuestionsPayload();
 
     try {
-        // The current API creates the complete survey in one request.
+        // backend dey create survey and questions together
         if (!surveyId) {
             const createResponse = await apiFetch('/surveys', {
                 method: 'POST',
@@ -394,6 +407,7 @@ async function submitSurvey() {
     }
 }
 
+// load old survey only when id dey link
 if (surveyId) {
     loadExistingSurvey(surveyId);
 }

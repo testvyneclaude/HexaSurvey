@@ -201,15 +201,18 @@
 
     <script src="theme.js"></script>
     <script>
+      // this one dey control mobile menu
       const bar = document.querySelector('.bar');
       const closeBtn = document.querySelector('.close-bar');
       const wrappedNav = document.querySelector('.wrappednav');
       const mobileLinks = document.querySelectorAll('.nav-linkss a');
 
+      // open menu when person tap the bars
       bar.addEventListener('click', () => {
         wrappedNav.classList.add('open');
       });
 
+      // close am when person tap the close button
       closeBtn.addEventListener('click', () => {
         wrappedNav.classList.remove('open');
       });

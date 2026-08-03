@@ -221,7 +221,7 @@
         // open whatsapp with survey message and link ready
         function shareSurveyOnWhatsApp(token, title){
             const shareUrl = `${window.location.origin}${window.location.pathname.replace('dashboard.html', '')}share.html?token=${encodeURIComponent(token)}`;
-            const message = `abeg help me fill this survey\n\n${title}\n${shareUrl}`;
+            const message = ` Fill this survey for Mr. Ambrose\n\n${title}\n${shareUrl}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
         }
         window.shareSurveyOnWhatsApp = shareSurveyOnWhatsApp;

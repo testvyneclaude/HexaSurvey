@@ -227,12 +227,14 @@
 <script src="theme.js"></script>
 <script src="api.js"></script>
 <script>
+    // Ensure the user is logged in before accessing analytics
     if (!isLoggedIn()){
         window.location.href = 'auth.html';
     }
 
     document.getElementById('navEmail').textContent = getEmail();
 
+    // Sign out event listener
     document.getElementById('signOutBtn').addEventListener('click', async (e) => {
         e.preventDefault();
         try {
@@ -245,6 +247,7 @@
             window.location.href = 'auth.html';
         }
     });
+
     const params = new URLSearchParams(window.location.search);
     const surveyId = params.get('id');
 
@@ -265,7 +268,18 @@
     }
 
     function renderMcqQuestion(q, totalResponses){
-        const counts = q.answer_counts || {};
+        let counts = q.answer_counts || {};
+        
+        // Convert backend array format ({option, count, percentage}) into key-value map if needed[cite: 4]
+        if (Array.isArray(q.results)) {
+            counts = {};
+            q.results.forEach(r => { 
+                if (r && r.option !== undefined) {
+                    counts[r.option] = r.count ?? 0;
+                }
+            });
+        }
+
         const options = q.options || Object.keys(counts);
         const maxCount = Math.max(1, ...options.map(opt => counts[opt] || 0));
 
@@ -290,7 +304,17 @@
     }
 
     function renderTextQuestion(q){
-        const answers = q.text_answers || [];
+        // Support all potential key names returned by Flask[cite: 4, 5]
+        const rawAnswers = q.text_answers || q.answers || q.results || q.responses || [];
+        
+        // Extract string values if backend returns an array of objects[cite: 4]
+        const answers = rawAnswers.map(a => {
+            if (typeof a === 'object' && a !== null) {
+                return a.answer || a.option || JSON.stringify(a);
+            }
+            return a;
+        }).filter(a => a !== null && a !== undefined && String(a).trim() !== '');
+
         if (answers.length === 0){
             return '<p style="color: var(--muted);">No responses yet.</p>';
         }
@@ -345,12 +369,18 @@
                 return;
             }
 
-            const survey = data.data;
+           // AFTER:
+// Support responses both wrapped in data.data and flat root objects
+const survey = data.data || data;
 
-            document.getElementById('surveyTitle').textContent = survey.title || 'Untitled survey';
-            document.getElementById('surveyDescription').textContent = survey.description || '';
+// Check for common title key variations (title, survey_title, name)
+const surveyTitle = survey.title || survey.survey_title || survey.name || data.title;
+const surveyDesc = survey.description || survey.survey_description || data.description || '';
 
-            const totalResponses = survey.response_count || 0;
+document.getElementById('surveyTitle').textContent = surveyTitle || 'Untitled survey';
+document.getElementById('surveyDescription').textContent = surveyDesc;
+            // Fallback chain for response count key[cite: 4, 5]
+            const totalResponses = survey['total responses'] ?? survey.total_responses ?? survey.response_count ?? 0;
             const questions = survey.questions || [];
 
             document.getElementById('responseCount').textContent = totalResponses;
@@ -404,5 +434,6 @@
 
     loadAnalytics();
 </script>
+
 </body>
 </html>

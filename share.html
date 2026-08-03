@@ -236,7 +236,7 @@
             const response = await fetch(`${API_BASE}/surveys/share/${shareToken}/responses`, {
                 method: 'POST',
                 headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders()),
-                body: JSON.stringify({ responses })
+                body: JSON.stringify({ responses:answers })
             });
 
             if (response.status === 401){
